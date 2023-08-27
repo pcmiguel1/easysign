@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".fragments.onboarding.OnBoardingFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@id/indicator" />
+
+        <me.relex.circleindicator.CircleIndicator3
+            android:id="@+id/indicator"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_above="@id/bottom_buttons"
+            app:ci_drawable="@drawable/boarding_indicator_selected"
+            app:ci_drawable_unselected="@drawable/boarding_indicator_unselected"
+            app:ci_height="6dp"
+            app:ci_margin="15dp"
+            app:ci_width="6dp" />
+
+        <LinearLayout
+            android:id="@+id/bottom_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/login_btn"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginBottom="15dp"
+                style="?android:attr/borderlessButtonStyle"
+                android:background="@drawable/custom_button"
+                android:backgroundTint="@color/black"
+                android:fontFamily="@font/urbanist_bold"
+                android:textSize="16sp"
+                android:text="Login"
+                android:textAllCaps="false"
+                android:textColor="@color/white"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/signup_btn"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                style="?android:attr/borderlessButtonStyle"
+                android:background="@drawable/custom_button_stroke"
+                android:backgroundTint="@color/black"
+                android:fontFamily="@font/urbanist_bold"
+                android:textSize="16sp"
+                android:text="Sign Up"
+                android:textAllCaps="false"
+                android:textColor="@color/black"/>
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

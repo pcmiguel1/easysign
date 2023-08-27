@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name">easysign</string>
+    <string name="app_name">Easy Sign</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="onboarding_1_title">Confortable e-signature</string>
+    <string name="onboarding_1_desc">Save time and money without using a single sheet of paper.</string>
+
+    <string name="onboarding_2_title">Save your time</string>
+    <string name="onboarding_2_desc">With AI you can simply generate documents and translate into several languages.</string>
+
+    <string name="onboarding_3_title">Guaranter of security</string>
+    <string name="onboarding_3_desc">Our security measures protect you and your business partners.</string>
+
+    <string name="home">Home</string>
+    <string name="documents">Documents</string>
+    <string name="settings">Settings</string>
+
 </resources>

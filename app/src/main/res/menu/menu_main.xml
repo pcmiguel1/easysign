@@ -1,0 +1,20 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.pcmiguel.pawcare.MainActivity">
+
+    <item android:title="@string/home"
+        android:id="@+id/homeFragment"
+        android:icon="@drawable/home" />
+
+    <item android:title="@string/documents"
+        android:id="@+id/documentsFragment"
+        android:icon="@drawable/documents"/>
+
+    <item android:title="@string/settings"
+        android:icon="@drawable/settings" />
+
+    <item
+        android:title=""/>
+
+</menu>
