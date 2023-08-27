@@ -12,6 +12,7 @@
         android:icon="@drawable/documents"/>
 
     <item android:title="@string/settings"
+        android:id="@+id/settingsFragment"
         android:icon="@drawable/settings" />
 
     <item

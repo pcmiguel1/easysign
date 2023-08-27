@@ -11,11 +11,15 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.widget.AppCompatButton
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.github.gcacace.signaturepad.views.SignaturePad
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
@@ -93,6 +97,19 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.documentsFragment -> {
                     navController.navigate(R.id.documentsFragment2)
+                }
+
+                R.id.settingsFragment -> {
+
+                    val view : View = layoutInflater.inflate(R.layout.item_bottom_sheet_settings, null)
+                    val dialog = BottomSheetDialog(this, R.style.AppBottomSheetDialogTheme)
+                    dialog.setContentView(view)
+                    dialog.setCancelable(true)
+
+                    dialog.behavior.peekHeight = 750
+
+                    dialog.show()
+
                 }
 
             }

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background_inset"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Signature"
+        android:textSize="13sp"
+        android:fontFamily="@font/urbanist_regular"
+        android:textColor="@color/text_color_gray"
+        android:textAlignment="center"/>
+
+    <com.github.gcacace.signaturepad.views.SignaturePad
+        android:id="@+id/signaturePad"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:penColor="@color/black" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray"
+        android:layout_marginBottom="20dp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_button_stroke"
+            android:text="Clear"
+            android:fontFamily="@font/urbanist_regular"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:enabled="false"
+            android:layout_alignParentStart="true"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_button"
+            android:backgroundTint="@color/black"
+            android:text="Save"
+            android:enabled="false"
+            android:textColor="@color/white"
+            android:fontFamily="@font/urbanist_regular"
+            android:textAllCaps="false"
+            android:textSize="15sp"
+            android:layout_alignParentEnd="true"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/blackColor_card"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/black">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/blackColor"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    app:cardElevation="0dp"
+                    app:cardCornerRadius="100dp"
+                    app:cardBackgroundColor="@color/black"
+                    android:layout_gravity="center"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/blueColor_card"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="2dp"
+                app:strokeColor="@android:color/transparent"
+                android:layout_marginStart="15dp">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/blueColor"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    app:cardElevation="0dp"
+                    app:cardCornerRadius="100dp"
+                    app:cardBackgroundColor="@color/blue"
+                    android:layout_gravity="center"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/redColor_card"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="2dp"
+                app:strokeColor="@android:color/transparent"
+                android:layout_marginStart="15dp">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/redColor"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    app:cardElevation="0dp"
+                    app:cardCornerRadius="100dp"
+                    app:cardBackgroundColor="@color/red"
+                    android:layout_gravity="center"/>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

@@ -20,4 +20,7 @@
     <color name="need_action">#fff4de</color>
     <color name="need_action2">#e5a500</color>
 
+    <color name="red">#DD5656</color>
+    <color name="blue">#0FA9EF</color>
+
 </resources>
