@@ -6,11 +6,14 @@ import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
+import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -80,6 +83,38 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigationView.setupWithNavController(navController)
 
+        bottomNavigationView.setOnItemSelectedListener {
+
+            when (it.itemId) {
+
+                R.id.homeFragment -> {
+                    navController.navigate(R.id.homeFragment2)
+                }
+
+                R.id.documentsFragment -> {
+                    navController.navigate(R.id.documentsFragment2)
+                }
+
+            }
+
+            true
+
+        }
+
+        navController.addOnDestinationChangedListener {_, destination, _ ->
+
+            when (destination.id) {
+
+                R.id.homeFragment2 -> {
+                    bottomNavigationView.menu.findItem(R.id.homeFragment).isChecked = true
+                }
+                R.id.documentsFragment2 -> {
+                    bottomNavigationView.menu.findItem(R.id.documentsFragment).isChecked = true
+                }
+
+            }
+        }
+
 
         plusBtn.setOnClickListener {
 
@@ -116,6 +151,10 @@ class MainActivity : AppCompatActivity() {
         signText.startAnimation(toBottomFabAnim)
         aiText.startAnimation(toBottomFabAnim)
 
+        sendBtn.isClickable = false
+        signBtn.isClickable = false
+        aiBtn.isClickable = false
+
         isExpanded = !isExpanded
 
     }
@@ -129,6 +168,10 @@ class MainActivity : AppCompatActivity() {
         sendText.startAnimation(fromBottomFabAnim)
         signText.startAnimation(fromBottomFabAnim)
         aiText.startAnimation(fromBottomFabAnim)
+
+        sendBtn.isClickable = true
+        signBtn.isClickable = true
+        aiBtn.isClickable = true
 
         isExpanded = !isExpanded
 
@@ -165,6 +208,29 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
         shrinkFab()
 
+
+    }
+
+    override fun onBackPressed() {
+
+        Utils.hideKeyboard(this)
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+        val navController = navHostFragment?.findNavController()
+
+        val currentFragment = navController?.currentDestination?.id
+
+        if (currentFragment == R.id.homeFragment2 || currentFragment == R.id.documentsFragment2) {
+
+            if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
+                super.onBackPressed()
+            else {
+                Toast.makeText(this, "Press again to exit", Toast.LENGTH_SHORT).show()
+                mBackPressed = System.currentTimeMillis()
+            }
+
+        }
+        else navController!!.popBackStack()
 
     }
 

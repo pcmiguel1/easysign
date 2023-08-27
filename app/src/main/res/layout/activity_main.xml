@@ -100,7 +100,8 @@
             app:layout_constraintEnd_toStartOf="@id/send"
             app:layout_constraintTop_toTopOf="@id/send"
             app:layout_constraintBottom_toBottomOf="@id/send"
-            android:visibility="invisible"/>
+            android:visibility="invisible"
+            android:elevation="4dp"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/sign"
@@ -129,7 +130,8 @@
             app:layout_constraintEnd_toStartOf="@id/sign"
             app:layout_constraintTop_toTopOf="@id/sign"
             app:layout_constraintBottom_toBottomOf="@id/sign"
-            android:visibility="invisible"/>
+            android:visibility="invisible"
+            android:elevation="4dp"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/ai"
@@ -159,7 +161,8 @@
             app:layout_constraintEnd_toStartOf="@id/ai"
             app:layout_constraintTop_toTopOf="@id/ai"
             app:layout_constraintBottom_toBottomOf="@id/ai"
-            android:visibility="invisible"/>
+            android:visibility="invisible"
+            android:elevation="4dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
