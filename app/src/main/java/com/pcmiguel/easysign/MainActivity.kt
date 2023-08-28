@@ -444,6 +444,8 @@ class MainActivity : AppCompatActivity() {
 
             val countries = World.getAllCountries()
 
+            var countrySelected = ""
+
             dialog.dismiss()
 
             val view : View = layoutInflater.inflate(R.layout.item_bottom_sheet_legal_ai, null)
@@ -454,11 +456,82 @@ class MainActivity : AppCompatActivity() {
             dialog.setContentView(view)
             dialog.setCancelable(true)
 
+            val uploadBtn = dialog.findViewById<View>(R.id.uploadBtn)
+            val checkBtn = dialog.findViewById<View>(R.id.checkBtn)
+            val loadingBtn = dialog.findViewById<View>(R.id.loading)
+            uploadImg = dialog.findViewById<ImageView>(R.id.upload_img)!!
+            uploadText = dialog.findViewById<TextView>(R.id.upload_text)!!
             val countriesSpinner = dialog.findViewById<Spinner>(R.id.countries)
+            val improvementsCard = dialog.findViewById<View>(R.id.improvements_card)
+            val improvementsText = dialog.findViewById<TextView>(R.id.improvements)
 
             val adapter = CountryAdapter(this, countries)
 
             countriesSpinner!!.adapter = adapter
+
+            countriesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+                    countrySelected = countries[position].name
+
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
+
+            }
+
+            uploadBtn!!.setOnClickListener {
+
+                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                intent.type = "application/pdf" // Limit the selection to PDF files
+                intent.addCategory(Intent.CATEGORY_OPENABLE)
+                startActivityForResult(intent, FILE_PICKER_LEGAL_REQUEST_CODE)
+
+            }
+
+            checkBtn!!.setOnClickListener {
+
+                if (fileUploaded) {
+
+                    checkBtn.visibility = View.GONE
+                    loadingBtn!!.visibility = View.VISIBLE
+
+                    val json = JsonObject()
+                    json.addProperty("model", "gpt-3.5-turbo")
+
+                    val messages = JsonArray()
+                    val msg = JsonObject()
+                    msg.addProperty("role", "user")
+                    msg.addProperty("content", "$extractedText what I can improve? $countrySelected")
+                    messages.add(msg)
+
+                    json.add("messages", messages)
+
+                    App.instance.backOffice.chatAI(object : Listener<Any> {
+                        override fun onResponse(response: Any?) {
+
+                            checkBtn.visibility = View.VISIBLE
+                            loadingBtn.visibility = View.GONE
+
+                            if (response != null && response is ApiAIInterface.ChatAI) {
+
+                                val choices = response.choices
+                                val text = choices!![0].message!!.content.toString()
+
+                                improvementsCard!!.visibility = View.VISIBLE
+                                improvementsText!!.text = text
+
+                            }
+
+                        }
+
+                    }, json)
+
+                }
+                else
+                    Toast.makeText(this, "No selected file", Toast.LENGTH_SHORT).show()
+
+            }
 
             dialog.show()
 
@@ -569,7 +642,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        else if (requestCode == FILE_PICKER_EXTRACT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        else if (requestCode == FILE_PICKER_EXTRACT_REQUEST_CODE || requestCode == FILE_PICKER_LEGAL_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
 
             val uri = data?.data
             if (uri != null) {
@@ -630,6 +703,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val FILE_PICKER_REQUEST_CODE = 123
         private const val FILE_PICKER_EXTRACT_REQUEST_CODE = 124
+        private const val FILE_PICKER_LEGAL_REQUEST_CODE = 125
     }
 
 }

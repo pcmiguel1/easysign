@@ -38,6 +38,7 @@
             android:padding="20dp">
 
             <androidx.appcompat.widget.AppCompatButton
+                android:visibility="gone"
                 android:id="@+id/login_btn"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
@@ -52,6 +53,7 @@
                 android:textColor="@color/white"/>
 
             <androidx.appcompat.widget.AppCompatButton
+                android:visibility="gone"
                 android:id="@+id/signup_btn"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
@@ -63,6 +65,38 @@
                 android:text="Sign Up"
                 android:textAllCaps="false"
                 android:textColor="@color/black"/>
+
+            <RelativeLayout
+                android:id="@+id/signinDropboxBtn"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@drawable/custom_button_stroke"
+                android:backgroundTint="@color/black">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_centerInParent="true"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/dropbox"/>
+
+                    <TextView
+                        android:layout_marginStart="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sign in with Dropbox"
+                        android:fontFamily="@font/urbanist_semibold"
+                        android:textSize="16sp"
+                        android:textColor="@color/text_color" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
 
 
         </LinearLayout>

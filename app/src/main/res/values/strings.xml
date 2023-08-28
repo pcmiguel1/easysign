@@ -3,14 +3,17 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <string name="onboarding_1_title">Confortable e-signature</string>
-    <string name="onboarding_1_desc">Save time and money without using a single sheet of paper.</string>
+    <string name="onboarding_1_title">Welcome to EasySign</string>
+    <string name="onboarding_1_desc">Experience a Revolutionary Approach to Agreement Signing with the Power of AI and Seamless Dropbox Integration</string>
 
-    <string name="onboarding_2_title">Save your time</string>
-    <string name="onboarding_2_desc">With AI you can simply generate documents and translate into several languages.</string>
+    <string name="onboarding_2_title">Revolutionize Agreement Signing</string>
+    <string name="onboarding_2_desc">Effortless, Efficient, and Secure – Simplify Your Agreement Workflow with AI-Powered Document Recognition, Automatic Signature Placement, and Seamless Dropbox Integration</string>
 
-    <string name="onboarding_3_title">Guaranter of security</string>
-    <string name="onboarding_3_desc">Our security measures protect you and your business partners.</string>
+    <string name="onboarding_3_title">Let AI Do the Work</string>
+    <string name="onboarding_3_desc">Witness the Magic as AI Simplifies Agreement Signing – Watch as It Identifies Signatures, Dates, and Crucial Elements to Streamline the Process</string>
+
+    <string name="onboarding_4_title">Seamless Management</string>
+    <string name="onboarding_4_desc">Access, Store, and Organize Your Agreements with Ease – Effortlessly Link Your Dropbox Account to Enjoy Hassle-Free Document Management</string>
 
     <string name="home">Home</string>
     <string name="documents">Documents</string>

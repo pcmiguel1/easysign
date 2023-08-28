@@ -25,6 +25,9 @@ android {
         buildConfigField "String", "SERVICE_URL_AI", "\"https://api.nova-oss.com/v1/\""
         buildConfigField "String", "API_AI_KEY", "\"nv-rZXtFIfAcv7uXDiiTjpCN0V4x0SSd8DYvYW6JG2av6j57XaH\""
 
+        buildConfigField "String", "APP_KEY_DROPBOX", "\"eduxc7smfiglr05\""
+        buildConfigField "String", "APP_SECRET_DROPBOX", "\"av95207tmhg1qbs\""
+
     }
 
     buildTypes {
@@ -84,5 +87,7 @@ dependencies {
     implementation 'com.github.blongho:worldCountryData:v1.5.4-alpha-1'
 
     implementation 'com.itextpdf:itext7-core:7.1.16'
+
+    implementation 'com.dropbox.core:dropbox-core-sdk:4.0.1'
 
 }
