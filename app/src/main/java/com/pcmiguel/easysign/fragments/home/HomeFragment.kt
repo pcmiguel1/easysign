@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.findFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.gcacace.signaturepad.views.SignaturePad
@@ -67,6 +68,12 @@ class HomeFragment : Fragment() {
         binding!!.createSignatureBtn.setOnClickListener {
 
             createSignature()
+
+        }
+
+        binding!!.allBtn.setOnClickListener {
+
+            findNavController().navigate(R.id.documentsFragment2)
 
         }
 

@@ -1,10 +1,13 @@
 package com.pcmiguel.easysign
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.Animation
@@ -21,6 +24,22 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import android.view.WindowManager.LayoutParams
+import android.widget.EditText
+import android.widget.Spinner
+import androidx.core.content.FileProvider
+import com.blongho.country_data.World
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfPage
+import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.layout.Document
+import com.itextpdf.layout.element.Paragraph
+import com.pawcare.pawcare.services.Listener
+import com.pcmiguel.easysign.services.ApiAIInterface
+import java.io.File
+import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -69,6 +88,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         App.instance.mainActivity = this
+
+        World.init(applicationContext)
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -222,6 +243,136 @@ class MainActivity : AppCompatActivity() {
         val dialog = builder.create()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+        val generateBtn = mDialogView.findViewById<View>(R.id.generateBtn)
+        val translationBtn = mDialogView.findViewById<View>(R.id.translationBtn)
+        val legalBtn = mDialogView.findViewById<View>(R.id.legalBtn)
+
+        generateBtn.setOnClickListener {
+
+            dialog.dismiss()
+
+            val view : View = layoutInflater.inflate(R.layout.item_bottom_sheet_generate_ai, null)
+            val dialog = BottomSheetDialog(this, R.style.AppBottomSheetDialogTheme)
+
+            dialog.window?.setSoftInputMode(LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+
+            dialog.setContentView(view)
+            dialog.setCancelable(true)
+
+            val loadingBtn = dialog.findViewById<View>(R.id.loading)
+            val message = dialog.findViewById<EditText>(R.id.message)
+            val generate = dialog.findViewById<View>(R.id.generateBtn)
+
+            generate!!.setOnClickListener {
+
+                if (message!!.text.toString().isNotEmpty()) {
+
+                    generate.visibility = View.GONE
+                    loadingBtn!!.visibility = View.VISIBLE
+
+                    val json = JsonObject()
+                    json.addProperty("model", "gpt-3.5-turbo")
+
+                    val messages = JsonArray()
+                    val msg = JsonObject()
+                    msg.addProperty("role", "user")
+                    msg.addProperty("content", message!!.text.toString())
+                    messages.add(msg)
+
+                    json.add("messages", messages)
+
+                    message.setText("")
+
+                    App.instance.backOffice.chatAI(object : Listener<Any> {
+                        override fun onResponse(response: Any?) {
+
+                            generate.visibility = View.VISIBLE
+                            loadingBtn.visibility = View.GONE
+
+                            if (response != null && response is ApiAIInterface.ChatAI) {
+
+                                val choices = response.choices
+                                val text = choices!![0].message!!.content.toString()
+
+                                val pdfFile = createPdfFromString(text)
+                                if (pdfFile != null) {
+                                    // Open the PDF file
+                                    openPdf(pdfFile)
+                                }
+
+                            }
+
+                        }
+
+                    }, json)
+
+                }
+
+            }
+
+            dialog.show()
+
+        }
+
+        translationBtn.setOnClickListener {
+
+            val languages = ArrayList<Pair<Int, String>>()
+            val countries = World.getAllCountries()
+
+            languages.clear()
+
+            for (country in countries) {
+
+                val language = World.getLanguagesFrom(country.name)[0]
+                if (language != null && language != "")
+                    languages.add(Pair(country.flagResource, language))
+
+            }
+
+            dialog.dismiss()
+
+            val view : View = layoutInflater.inflate(R.layout.item_bottom_sheet_translation_ai, null)
+            val dialog = BottomSheetDialog(this, R.style.AppBottomSheetDialogTheme)
+
+            dialog.window?.setSoftInputMode(LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+
+            dialog.setContentView(view)
+            dialog.setCancelable(true)
+
+            val languagesSpinner = dialog.findViewById<Spinner>(R.id.languages)
+
+            val adapter = LanguageAdapter(this, languages)
+
+            languagesSpinner!!.adapter = adapter
+
+            dialog.show()
+
+        }
+
+        legalBtn.setOnClickListener {
+
+            val countries = World.getAllCountries()
+
+            dialog.dismiss()
+
+            val view : View = layoutInflater.inflate(R.layout.item_bottom_sheet_legal_ai, null)
+            val dialog = BottomSheetDialog(this, R.style.AppBottomSheetDialogTheme)
+
+            dialog.window?.setSoftInputMode(LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+
+            dialog.setContentView(view)
+            dialog.setCancelable(true)
+
+            val countriesSpinner = dialog.findViewById<Spinner>(R.id.countries)
+
+            val adapter = CountryAdapter(this, countries)
+
+            countriesSpinner!!.adapter = adapter
+
+            dialog.show()
+
+        }
+
         dialog.show()
         shrinkFab()
 
@@ -249,6 +400,38 @@ class MainActivity : AppCompatActivity() {
         }
         else navController!!.popBackStack()
 
+    }
+
+    private fun createPdfFromString(text: String): File? {
+        try {
+            val storageDir = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS)
+            storageDir?.mkdirs()
+
+            val pdfFile = File(storageDir, "sample.pdf")
+
+            val pdfWriter = PdfWriter(FileOutputStream(pdfFile))
+            val pdfDocument = PdfDocument(pdfWriter)
+            val document = Document(pdfDocument)
+
+            document.add(Paragraph(text))
+
+            document.close()
+            pdfWriter.close()
+
+            return pdfFile
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        }
+    }
+
+    private fun openPdf(pdfFile: File) {
+        val pdfUri = FileProvider.getUriForFile(this, "com.pcmiguel.easysign.provider", pdfFile)
+
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(pdfUri, "application/pdf")
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        startActivity(intent)
     }
 
 }

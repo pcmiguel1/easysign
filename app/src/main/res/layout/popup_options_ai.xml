@@ -22,6 +22,7 @@
         android:layout_marginTop="20dp">
 
         <LinearLayout
+            android:id="@+id/generateBtn"
             android:layout_marginEnd="10dp"
             android:layout_width="0dp"
             android:layout_weight="0.5"
@@ -48,6 +49,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/translationBtn"
             android:layout_marginStart="10dp"
             android:layout_width="0dp"
             android:layout_weight="0.5"
@@ -74,6 +76,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/legalBtn"
             android:layout_marginStart="10dp"
             android:layout_width="0dp"
             android:layout_weight="0.5"
