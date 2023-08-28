@@ -1,12 +1,20 @@
 package com.pcmiguel.easysign
 
+import android.app.Activity
 import android.app.AlertDialog
+import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.provider.DocumentsContract
+import android.provider.MediaStore
+import android.provider.OpenableColumns
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -25,15 +33,20 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.view.WindowManager.LayoutParams
+import android.widget.AdapterView
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Spinner
 import androidx.core.content.FileProvider
+import androidx.documentfile.provider.DocumentFile
 import com.blongho.country_data.World
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfPage
+import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.PdfWriter
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import com.pawcare.pawcare.services.Listener
@@ -47,7 +60,8 @@ class MainActivity : AppCompatActivity() {
     private var mBackPressed: Long = 0
 
     private var isExpanded = false
-
+    private var fileUploaded = false
+    private var extractedText = ""
     private val fromBottomFabAnim : Animation by lazy {
         AnimationUtils.loadAnimation(this, R.anim.from_bottom_fab)
     }
@@ -80,6 +94,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var signText : TextView
     private lateinit var sendText : TextView
     private lateinit var aiText : TextView
+
+    private lateinit var uploadImg : ImageView
+    private lateinit var uploadText: TextView
 
     private lateinit var bottomNavigationView: BottomNavigationView
 
@@ -319,6 +336,8 @@ class MainActivity : AppCompatActivity() {
             val languages = ArrayList<Pair<Int, String>>()
             val countries = World.getAllCountries()
 
+            var languageSelected = ""
+
             languages.clear()
 
             for (country in countries) {
@@ -339,11 +358,83 @@ class MainActivity : AppCompatActivity() {
             dialog.setContentView(view)
             dialog.setCancelable(true)
 
+            val uploadBtn = dialog.findViewById<View>(R.id.uploadBtn)
+            val translateBtn = dialog.findViewById<View>(R.id.translateBtn)
+            val loadingBtn = dialog.findViewById<View>(R.id.loading)
+            uploadImg = dialog.findViewById<ImageView>(R.id.upload_img)!!
+            uploadText = dialog.findViewById<TextView>(R.id.upload_text)!!
             val languagesSpinner = dialog.findViewById<Spinner>(R.id.languages)
 
             val adapter = LanguageAdapter(this, languages)
 
             languagesSpinner!!.adapter = adapter
+
+            languagesSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+
+                    languageSelected = languages[position].second
+
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {}
+
+            }
+
+            uploadBtn!!.setOnClickListener {
+
+                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                intent.type = "application/pdf" // Limit the selection to PDF files
+                intent.addCategory(Intent.CATEGORY_OPENABLE)
+                startActivityForResult(intent, FILE_PICKER_EXTRACT_REQUEST_CODE)
+
+            }
+
+            translateBtn!!.setOnClickListener {
+
+                if (fileUploaded) {
+
+                    translateBtn.visibility = View.GONE
+                    loadingBtn!!.visibility = View.VISIBLE
+
+                    val json = JsonObject()
+                    json.addProperty("model", "gpt-3.5-turbo")
+
+                    val messages = JsonArray()
+                    val msg = JsonObject()
+                    msg.addProperty("role", "user")
+                    msg.addProperty("content", "$extractedText translate to $languageSelected")
+                    messages.add(msg)
+
+                    json.add("messages", messages)
+
+                    App.instance.backOffice.chatAI(object : Listener<Any> {
+                        override fun onResponse(response: Any?) {
+
+                            translateBtn.visibility = View.VISIBLE
+                            loadingBtn.visibility = View.GONE
+
+                            if (response != null && response is ApiAIInterface.ChatAI) {
+
+                                val choices = response.choices
+                                val text = choices!![0].message!!.content.toString()
+
+                                val pdfFile = createPdfFromString(text)
+                                if (pdfFile != null) {
+                                    // Open the PDF file
+                                    openPdf(pdfFile)
+                                }
+
+                            }
+
+                        }
+
+                    }, json)
+
+                }
+                else
+                    Toast.makeText(this, "No selected file", Toast.LENGTH_SHORT).show()
+
+            }
 
             dialog.show()
 
@@ -432,6 +523,113 @@ class MainActivity : AppCompatActivity() {
         intent.setDataAndType(pdfUri, "application/pdf")
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         startActivity(intent)
+    }
+
+    private fun isPdfFile(uri: Uri): Boolean {
+        val contentResolver = applicationContext.contentResolver
+        val mimeType = contentResolver.getType(uri)
+        return mimeType == "application/pdf"
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == FILE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val uri = data?.data
+            if (uri != null) {
+                // Check if the selected file is a PDF
+                if (isPdfFile(uri)) {
+                    // The selected file is a PDF, you can now proceed with the upload.
+                    // uri contains the URI of the selected file.
+                    val contentResolver = applicationContext.contentResolver
+                    val cursor = contentResolver.query(uri, null, null, null, null)
+
+                    fileUploaded = true
+
+                    uploadImg.visibility = View.GONE
+
+                    if (cursor != null) {
+                        val displayNameColumnIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+
+                        if (displayNameColumnIndex != -1 && cursor.moveToFirst()) {
+                            val displayName = cursor.getString(displayNameColumnIndex)
+                            cursor.close()
+
+                            uploadText.text = displayName
+                        } else {
+                            // Handle the case where DISPLAY_NAME is not available
+                            // You can use a default name or display an error message
+                            uploadText.text = uri.path
+                        }
+                    }
+
+                } else {
+                    // The selected file is not a PDF. You can display an error message to the user.
+                    Toast.makeText(this, "The selected file is not a PDF", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        else if (requestCode == FILE_PICKER_EXTRACT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
+            val uri = data?.data
+            if (uri != null) {
+                // Check if the selected file is a PDF
+                if (isPdfFile(uri)) {
+                    // The selected file is a PDF, you can now proceed with the upload.
+                    // uri contains the URI of the selected file.
+                    val contentResolver = applicationContext.contentResolver
+                    val cursor = contentResolver.query(uri, null, null, null, null)
+
+                    fileUploaded = true
+                    extractedText = extractTextFromPdf(contentResolver, uri)
+
+                    uploadImg.visibility = View.GONE
+
+                    if (cursor != null) {
+                        val displayNameColumnIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+
+                        if (displayNameColumnIndex != -1 && cursor.moveToFirst()) {
+                            val displayName = cursor.getString(displayNameColumnIndex)
+                            cursor.close()
+
+                            uploadText.text = displayName
+                        } else {
+                            // Handle the case where DISPLAY_NAME is not available
+                            // You can use a default name or display an error message
+                            uploadText.text = uri.path
+                        }
+                    }
+
+                } else {
+                    // The selected file is not a PDF. You can display an error message to the user.
+                    Toast.makeText(this, "The selected file is not a PDF", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+        }
+    }
+
+    fun extractTextFromPdf(contentResolver: ContentResolver, pdfUri: Uri): String {
+        val pdfInputStream = contentResolver.openInputStream(pdfUri)
+        val pdfDocument = PdfDocument(PdfReader(pdfInputStream))
+        val pageCount = pdfDocument.numberOfPages
+        val text = StringBuilder()
+
+        for (pageNum in 1..pageCount) {
+            val page = pdfDocument.getPage(pageNum)
+            val textExtractor = PdfTextExtractor.getTextFromPage(page)
+            text.append(textExtractor)
+        }
+
+        pdfDocument.close()
+        pdfInputStream?.close()
+
+        return text.toString()
+    }
+
+    companion object {
+        private const val FILE_PICKER_REQUEST_CODE = 123
+        private const val FILE_PICKER_EXTRACT_REQUEST_CODE = 124
     }
 
 }
