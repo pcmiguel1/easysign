@@ -40,6 +40,13 @@ import android.widget.Spinner
 import androidx.core.content.FileProvider
 import androidx.documentfile.provider.DocumentFile
 import com.blongho.country_data.World
+import com.dropbox.core.DbxException
+import com.dropbox.core.DbxRequestConfig
+import com.dropbox.core.android.Auth
+import com.dropbox.core.v2.DbxClientV2
+import com.dropbox.core.v2.DbxRawClientV2
+import com.dropbox.core.v2.auth.DbxAppAuthRequests
+import com.dropbox.core.v2.auth.DbxUserAuthRequests
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.itextpdf.kernel.pdf.PdfDocument
@@ -50,9 +57,16 @@ import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import com.pawcare.pawcare.services.Listener
+import com.pcmiguel.easysign.Utils.openActivity
 import com.pcmiguel.easysign.services.ApiAIInterface
+import com.squareup.picasso.Picasso
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import okhttp3.*
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
@@ -145,6 +159,64 @@ class MainActivity : AppCompatActivity() {
                     dialog.setCancelable(true)
 
                     dialog.behavior.peekHeight = 750
+
+                    val nameText = dialog.findViewById<TextView>(R.id.name)
+                    val emailText = dialog.findViewById<TextView>(R.id.email)
+                    val profilePic = dialog.findViewById<ImageView>(R.id.image)
+
+                    val logoutBtn = dialog.findViewById<View>(R.id.logoutBtn)
+
+                    nameText!!.text = App.instance.preferences.getString("Name", "")
+                    emailText!!.text = App.instance.preferences.getString("Email", "")
+
+                    val photoUrl = App.instance.preferences.getString("ProfilePhotoUrl", "")
+
+                    if (photoUrl != "") {
+
+                        Picasso.get()
+                            .load(photoUrl)
+                            .placeholder(R.drawable.profile_template)
+                            .error(R.drawable.profile_template)
+                            .into(profilePic, object : com.squareup.picasso.Callback {
+                                override fun onSuccess() {
+
+                                }
+
+                                override fun onError(e: java.lang.Exception?) {
+
+                                }
+
+                            })
+
+                    }
+
+                    logoutBtn!!.setOnClickListener {
+
+                        dialog.dismiss()
+
+                        val accessToken = Auth.getOAuth2Token()
+
+                        if (accessToken != null) {
+
+                            GlobalScope.launch(Dispatchers.IO) {
+
+                                val client = DbxClientV2(DbxRequestConfig.newBuilder("easysignapp").build(), accessToken)
+
+                                try {
+                                    // Revoke the access token
+                                    client.auth().tokenRevoke()
+                                    App.instance.preferences.edit().clear().apply()
+
+                                    openActivity(LoadingActivity::class.java)
+                                } catch (e: DbxException) {
+                                    e.printStackTrace()
+                                }
+
+                            }
+
+                        }
+
+                    }
 
                     dialog.show()
 
@@ -698,6 +770,41 @@ class MainActivity : AppCompatActivity() {
         pdfInputStream?.close()
 
         return text.toString()
+    }
+
+    private fun revokeAccessToken(accessToken: String) {
+        // Send a POST request to the Dropbox OAuth 2.0 Token Revocation endpoint
+        val url = "https://api.dropboxapi.com/2/auth/token/revoke"
+        val client = OkHttpClient()
+
+        val requestBody = FormBody.Builder()
+            .add("token", accessToken)
+            .build()
+
+        val request = Request.Builder()
+            .url(url)
+            .header("Content-Type", "application/x-www-form-urlencoded")
+            .post(requestBody)
+            .build()
+
+        client.newCall(request).enqueue(object : Callback {
+            override fun onResponse(call: Call, response: Response) {
+                // Handle the response as needed (e.g., check for success)
+                if (response.isSuccessful) {
+                    // Token successfully revoked
+                    App.instance.preferences.edit().clear().apply()
+
+                    openActivity(LoadingActivity::class.java)
+                } else {
+                    // Error occurred while revoking token
+                }
+            }
+
+            override fun onFailure(call: Call, e: IOException) {
+                e.printStackTrace()
+                // Handle the network request failure
+            }
+        })
     }
 
     companion object {

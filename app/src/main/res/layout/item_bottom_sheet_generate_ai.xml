@@ -61,7 +61,7 @@
         android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Import details about the Agreement?"
+        android:text="Important details about the Agreement?"
         android:fontFamily="@font/urbanist_regular"
         android:textSize="15sp"
         android:paddingHorizontal="20dp"

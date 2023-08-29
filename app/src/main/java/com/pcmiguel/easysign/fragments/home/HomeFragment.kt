@@ -1,6 +1,7 @@
 package com.pcmiguel.easysign.fragments.home
 
 import android.app.AlertDialog
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -12,16 +13,29 @@ import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.findFragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.dropbox.core.DbxRequestConfig
+import com.dropbox.core.v2.DbxClientV2
+import com.dropbox.core.v2.files.FileMetadata
+import com.dropbox.core.v2.files.WriteMode
 import com.github.gcacace.signaturepad.views.SignaturePad
 import com.google.android.material.card.MaterialCardView
 import com.pcmiguel.easysign.App
 import com.pcmiguel.easysign.R
 import com.pcmiguel.easysign.databinding.FragmentHomeBinding
 import com.pcmiguel.easysign.fragments.home.adapter.RequestsAdapter
+import com.pcmiguel.easysign.libraries.LoadingDialog
 import com.pcmiguel.easysign.services.ApiInterface
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 class HomeFragment : Fragment() {
 
@@ -30,6 +44,8 @@ class HomeFragment : Fragment() {
     private lateinit var recyclerViewRequests: RecyclerView
     private var requests: MutableList<ApiInterface.Requests> = mutableListOf()
     private lateinit var requestsAdapter: RequestsAdapter
+
+    private lateinit var loadingDialog: LoadingDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,6 +62,10 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loadingDialog = LoadingDialog(requireContext())
+
+        binding!!.welcome.text = String.format(getString(R.string.welcome), App.instance.preferences.getString("Name", ""))
 
         recyclerViewRequests = binding!!.requests
         recyclerViewRequests.setHasFixedSize(true)
@@ -169,10 +189,34 @@ class HomeFragment : Fragment() {
         }
 
         saveBtn.setOnClickListener {
+
+            loadingDialog.startLoading()
+
             val signatureBitmap = signaturePad.signatureBitmap
             val signature = binding!!.signature
 
             signature.setImageBitmap(signatureBitmap)
+
+            val remoteFileName = "signature_" + App.instance.preferences.getString("UserId", "")+".png"
+            val signatureFile = File(requireContext().cacheDir, remoteFileName)
+
+            try {
+                // Create a FileOutputStream to write the bitmap data to the file
+                val fileOutputStream = FileOutputStream(signatureFile)
+
+                // Compress the bitmap as PNG format and save it to the file
+                signatureBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream)
+
+                // Close the FileOutputStream
+                fileOutputStream.close()
+
+                // Use a Kotlin coroutine to upload the image to Dropbox in the background
+                uploadSignatureToDropbox(signatureFile, remoteFileName)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // Handle any exceptions that may occur during file saving
+            }
 
             dialog.dismiss()
 
@@ -181,6 +225,39 @@ class HomeFragment : Fragment() {
         dialog.show()
 
 
+    }
+
+    private fun uploadSignatureToDropbox(signatureFile: File, remoteFileName: String) {
+        // Start a coroutine in the background
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val remoteFolderPath = "/signatures"
+                val client = DbxClientV2(
+                    DbxRequestConfig.newBuilder("easysignapp").build(),
+                    App.instance.preferences.getString("AccessToken", "")
+                )
+
+                val remotePath = "$remoteFolderPath/$remoteFileName"
+                val inputStream = signatureFile.inputStream()
+                val fileMetadata = client.files().uploadBuilder(remotePath)
+                    .withMode(WriteMode.OVERWRITE) // Specify this line to overwrite the existing file
+                    .uploadAndFinish(inputStream)
+
+                // Handle the result of the upload here, if needed
+                val uploadedPath = fileMetadata.pathDisplay
+
+                // You can update the UI from the main thread if needed
+                withContext(Dispatchers.Main) {
+                    // Update the UI or display a success message
+                    loadingDialog.isDismiss()
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // Handle any exceptions that may occur during the Dropbox upload
+                // You can also update the UI with an error message from the main thread
+            }
+        }
     }
 
 }

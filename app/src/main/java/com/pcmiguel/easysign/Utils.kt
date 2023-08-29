@@ -3,6 +3,7 @@ package com.pcmiguel.easysign
 import android.Manifest
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Matrix
@@ -11,6 +12,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -24,6 +26,12 @@ import java.util.ArrayList
 import java.util.regex.Pattern
 
 object Utils {
+
+    fun <T> Context.openActivity(it: Class<T>, extras: Bundle.() -> Unit = {}) {
+        var intent = Intent(this, it)
+        intent.putExtras(Bundle().apply(extras))
+        startActivity(intent)
+    }
 
     fun validCode(code: String): Boolean {
         val codePattern = Pattern.compile("^[0-9]{4}$")

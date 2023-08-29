@@ -38,11 +38,12 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/welcome"
             android:layout_marginTop="20dp"
             android:layout_marginHorizontal="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Welcome back, Miguel Amaro"
+            android:text="@string/welcome"
             android:textSize="18sp"
             android:textColor="@color/text_color"
             android:fontFamily="@font/urbanist_bold"/>
