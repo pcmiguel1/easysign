@@ -2,9 +2,11 @@ package com.pcmiguel.easysign.fragments.home
 
 import android.app.AlertDialog
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +31,7 @@ import com.pcmiguel.easysign.databinding.FragmentHomeBinding
 import com.pcmiguel.easysign.fragments.home.adapter.RequestsAdapter
 import com.pcmiguel.easysign.libraries.LoadingDialog
 import com.pcmiguel.easysign.services.ApiInterface
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -95,6 +98,20 @@ class HomeFragment : Fragment() {
 
             findNavController().navigate(R.id.documentsFragment2)
 
+        }
+
+        val signature = binding!!.signature
+
+        val client = DbxClientV2(
+            DbxRequestConfig.newBuilder("easysignapp").build(),
+            App.instance.preferences.getString("AccessToken", "")
+        )
+        val remoteFilePath = "/signatures/"+"signature_" + App.instance.preferences.getString("UserId", "")+".png"
+
+        Log.d("remoteFilePath", remoteFilePath)
+
+        lifecycleScope.launch {
+            getSignature(client, remoteFilePath)
         }
 
 
@@ -256,6 +273,40 @@ class HomeFragment : Fragment() {
                 e.printStackTrace()
                 // Handle any exceptions that may occur during the Dropbox upload
                 // You can also update the UI with an error message from the main thread
+            }
+        }
+    }
+
+    private suspend fun getSignature(client: DbxClientV2, remoteFilePath: String) {
+        withContext(Dispatchers.IO) {
+            try {
+
+                val fileMetadata = client.files().download(remoteFilePath).inputStream
+                val imageBitmap = if (fileMetadata != null) BitmapFactory.decodeStream(fileMetadata) else null
+
+                if (imageBitmap != null) {
+                    withContext(Dispatchers.Main) { binding!!.signature.setImageBitmap(imageBitmap) }
+                }
+
+                /*// Check if there's an existing shared link for the file
+                val existingLinks = client.sharing().listSharedLinksBuilder().withPath(remoteFilePath).start()
+                signatureUrl = if (existingLinks.links.isNotEmpty()) {
+                    // Return the URL of the existing link
+                    existingLinks.links[0].url
+                } else {
+
+                    // If no existing link, create a new one
+                    val sharedLinkMetadata = client.sharing().createSharedLinkWithSettings(remoteFilePath)
+
+                    // Extract the URL from the shared link metadata
+                    sharedLinkMetadata.url
+
+                }*/
+
+
+
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
