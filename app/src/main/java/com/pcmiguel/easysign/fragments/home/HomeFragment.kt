@@ -1,6 +1,8 @@
 package com.pcmiguel.easysign.fragments.home
 
+import android.Manifest
 import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -13,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.findFragment
 import androidx.lifecycle.lifecycleScope
@@ -287,23 +290,6 @@ class HomeFragment : Fragment() {
                 if (imageBitmap != null) {
                     withContext(Dispatchers.Main) { binding!!.signature.setImageBitmap(imageBitmap) }
                 }
-
-                /*// Check if there's an existing shared link for the file
-                val existingLinks = client.sharing().listSharedLinksBuilder().withPath(remoteFilePath).start()
-                signatureUrl = if (existingLinks.links.isNotEmpty()) {
-                    // Return the URL of the existing link
-                    existingLinks.links[0].url
-                } else {
-
-                    // If no existing link, create a new one
-                    val sharedLinkMetadata = client.sharing().createSharedLinkWithSettings(remoteFilePath)
-
-                    // Extract the URL from the shared link metadata
-                    sharedLinkMetadata.url
-
-                }*/
-
-
 
             } catch (e: Exception) {
                 e.printStackTrace()

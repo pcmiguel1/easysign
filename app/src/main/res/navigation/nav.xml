@@ -22,10 +22,18 @@
         <action
             android:id="@+id/action_homeFragment2_to_documentsFragment2"
             app:destination="@id/documentsFragment2" />
+        <action
+            android:id="@+id/action_homeFragment2_to_scanFragment"
+            app:destination="@id/scanFragment" />
     </fragment>
     <fragment
         android:id="@+id/documentsFragment2"
         android:name="com.pcmiguel.easysign.fragments.documents.DocumentsFragment"
         android:label="fragment_documents"
         tools:layout="@layout/fragment_documents" />
+    <fragment
+        android:id="@+id/scanFragment"
+        android:name="com.pcmiguel.easysign.fragments.scan.ScanFragment"
+        android:label="fragment_scan"
+        tools:layout="@layout/fragment_scan" />
 </navigation>

@@ -3,33 +3,26 @@ package com.pcmiguel.easysign
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
-import android.provider.DocumentsContract
-import android.provider.MediaStore
 import android.provider.OpenableColumns
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatButton
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
-import com.github.gcacace.signaturepad.views.SignaturePad
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import android.view.WindowManager.LayoutParams
@@ -37,20 +30,17 @@ import android.widget.AdapterView
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.documentfile.provider.DocumentFile
 import com.blongho.country_data.World
 import com.dropbox.core.DbxException
 import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.android.Auth
 import com.dropbox.core.v2.DbxClientV2
-import com.dropbox.core.v2.DbxRawClientV2
-import com.dropbox.core.v2.auth.DbxAppAuthRequests
-import com.dropbox.core.v2.auth.DbxUserAuthRequests
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfPage
 import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
@@ -58,6 +48,7 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import com.pawcare.pawcare.services.Listener
 import com.pcmiguel.easysign.Utils.openActivity
+import com.pcmiguel.easysign.fragments.scan.Scanner
 import com.pcmiguel.easysign.services.ApiAIInterface
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
@@ -128,6 +119,9 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigationView = findViewById(R.id.bottom_navigation_view)
 
+        val inflater = navHostFragment.navController.navInflater
+        val graph = inflater.inflate(R.navigation.nav)
+
         plusBtn = findViewById(R.id.plus_btn)
         signBtn = findViewById(R.id.sign)
         sendBtn = findViewById(R.id.send)
@@ -136,6 +130,12 @@ class MainActivity : AppCompatActivity() {
         sendText = findViewById(R.id.send_text)
         aiText = findViewById(R.id.ai_text)
 
+        if (App.instance.preferences.getString("UserId", "") != "") {
+            graph.setStartDestination(R.id.homeFragment2)
+        }
+        else graph.setStartDestination(R.id.onBoardingFragment)
+
+        navController.graph = graph
 
         bottomNavigationView.setupWithNavController(navController)
 
@@ -194,6 +194,8 @@ class MainActivity : AppCompatActivity() {
 
                         dialog.dismiss()
 
+                        App.instance.preferences.edit().clear().apply()
+
                         val accessToken = Auth.getOAuth2Token()
 
                         if (accessToken != null) {
@@ -205,15 +207,18 @@ class MainActivity : AppCompatActivity() {
                                 try {
                                     // Revoke the access token
                                     client.auth().tokenRevoke()
-                                    App.instance.preferences.edit().clear().apply()
 
                                     openActivity(LoadingActivity::class.java)
+
                                 } catch (e: DbxException) {
                                     e.printStackTrace()
                                 }
 
                             }
 
+                        }
+                        else {
+                            openActivity(LoadingActivity::class.java)
                         }
 
                     }
@@ -314,6 +319,21 @@ class MainActivity : AppCompatActivity() {
 
         val dialog = builder.create()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val templateButton = mDialogView.findViewById<View>(R.id.templateBtn)
+        val scanButton = mDialogView.findViewById<View>(R.id.scanBtn)
+        val photoButton = mDialogView.findViewById<View>(R.id.photoBtn)
+        val browseButton = mDialogView.findViewById<View>(R.id.browseBtn)
+
+
+        scanButton.setOnClickListener {
+
+            dialog.dismiss()
+
+            val intent = Intent(this, Scanner::class.java)
+            startActivity(intent)
+
+        }
 
         dialog.show()
         shrinkFab()
@@ -805,6 +825,32 @@ class MainActivity : AppCompatActivity() {
                 // Handle the network request failure
             }
         })
+    }
+
+    private fun checkPermission() : Boolean {
+        val result = ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.CAMERA)
+        return result == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun requestPermission() {
+        ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 1)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+
+            1 -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+
+                }
+            }
+
+        }
     }
 
     companion object {

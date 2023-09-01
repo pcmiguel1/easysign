@@ -48,6 +48,14 @@ android {
     buildFeatures {
         viewBinding true
     }
+
+    sourceSets {
+        main {
+            jni {
+                srcDirs 'src\\main\\jni', 'src\\main\\jnilibs'
+            }
+        }
+    }
 }
 
 dependencies {
@@ -89,5 +97,14 @@ dependencies {
     implementation 'com.itextpdf:itext7-core:7.1.16'
 
     implementation 'com.dropbox.core:dropbox-core-sdk:4.0.1'
+
+    implementation "androidx.camera:camera-camera2:1.1.0"
+    implementation "androidx.camera:camera-lifecycle:1.1.0"
+    implementation "androidx.camera:camera-view:1.0.0-alpha28"
+
+    implementation 'com.quickbirdstudios:opencv:4.5.3.0'
+    implementation 'id.zelory:compressor:3.0.1'
+    implementation 'com.github.fondesa:kpermissions:3.3.0'
+
 
 }

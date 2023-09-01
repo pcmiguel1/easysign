@@ -36,4 +36,11 @@
         <item name="android:background">@drawable/bottomsheet_shape</item>
     </style>
 
+    <style name="TextShadow">
+        <item name="android:shadowColor">@color/colorBlackThirtyFivePercentAlpha</item>
+        <item name="android:shadowDx">2</item>
+        <item name="android:shadowDy">2</item>
+        <item name="android:shadowRadius">5</item>
+    </style>
+
 </resources>

@@ -22,6 +22,7 @@ import com.pcmiguel.easysign.LoadingActivity
 import com.pcmiguel.easysign.R
 import com.pcmiguel.easysign.Utils.openActivity
 import com.pcmiguel.easysign.databinding.FragmentOnBoardingBinding
+import com.pcmiguel.easysign.libraries.LoadingDialog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -34,6 +35,9 @@ class OnBoardingFragment : Fragment() {
     private var titleList = mutableListOf<String>()
     private var descList = mutableListOf<String>()
     private var imagesList = mutableListOf<Int>()
+
+    private lateinit var loadingDialog: LoadingDialog
+    private var login = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +53,8 @@ class OnBoardingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loadingDialog = LoadingDialog(requireContext())
 
         App.instance.mainActivity!!.findViewById<View>(R.id.bottombar).visibility = View.GONE
         App.instance.mainActivity!!.findViewById<View>(R.id.plus_btn).visibility = View.GONE
@@ -76,6 +82,7 @@ class OnBoardingFragment : Fragment() {
 
         binding!!.signinDropboxBtn.setOnClickListener {
 
+            login = true
             Auth.startOAuth2Authentication(requireContext(), BuildConfig.APP_KEY_DROPBOX)
 
         }
@@ -102,7 +109,9 @@ class OnBoardingFragment : Fragment() {
         super.onResume()
 
         val accessToken = Auth.getOAuth2Token()
-        if (accessToken != null) {
+        if (accessToken != null && login) {
+
+            loadingDialog.startLoading()
 
             // Execute fetchUserEmail in a background thread
             GlobalScope.launch(Dispatchers.IO) {
@@ -135,6 +144,7 @@ class OnBoardingFragment : Fragment() {
 
                 // Switch to the main thread for UI-related operations
                 withContext(Dispatchers.Main) {
+                    loadingDialog.isDismiss()
                     // User has successfully authenticated
                     findNavController().apply {
                         popBackStack(R.id.onBoardingFragment, true)
