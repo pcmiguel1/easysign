@@ -23,8 +23,8 @@
             android:id="@+id/action_homeFragment2_to_documentsFragment2"
             app:destination="@id/documentsFragment2" />
         <action
-            android:id="@+id/action_homeFragment2_to_scanFragment"
-            app:destination="@id/scanFragment" />
+            android:id="@+id/action_homeFragment2_to_addDocumentsFragment"
+            app:destination="@id/addDocumentsFragment" />
     </fragment>
     <fragment
         android:id="@+id/documentsFragment2"
@@ -32,8 +32,17 @@
         android:label="fragment_documents"
         tools:layout="@layout/fragment_documents" />
     <fragment
-        android:id="@+id/scanFragment"
-        android:name="com.pcmiguel.easysign.fragments.scan.ScanFragment"
-        android:label="fragment_scan"
-        tools:layout="@layout/fragment_scan" />
+        android:id="@+id/addDocumentsFragment"
+        android:name="com.pcmiguel.easysign.fragments.adddocuments.AddDocumentsFragment"
+        android:label="fragment_add_documents"
+        tools:layout="@layout/fragment_add_documents" >
+        <action
+            android:id="@+id/action_addDocumentsFragment_to_addRecipientFragment"
+            app:destination="@id/addRecipientFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addRecipientFragment"
+        android:name="com.pcmiguel.easysign.fragments.addrecipient.AddRecipientFragment"
+        android:label="fragment_add_recipient"
+        tools:layout="@layout/fragment_add_recipient" />
 </navigation>

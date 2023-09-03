@@ -11,6 +11,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.view.LayoutInflater
 import android.view.View
@@ -48,6 +49,7 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import com.pawcare.pawcare.services.Listener
 import com.pcmiguel.easysign.Utils.openActivity
+import com.pcmiguel.easysign.fragments.adddocuments.AddDocumentsFragment
 import com.pcmiguel.easysign.fragments.scan.Scanner
 import com.pcmiguel.easysign.services.ApiAIInterface
 import com.squareup.picasso.Picasso
@@ -325,6 +327,7 @@ class MainActivity : AppCompatActivity() {
         val photoButton = mDialogView.findViewById<View>(R.id.photoBtn)
         val browseButton = mDialogView.findViewById<View>(R.id.browseBtn)
 
+        templateButton.setOnClickListener {  }
 
         scanButton.setOnClickListener {
 
@@ -332,6 +335,26 @@ class MainActivity : AppCompatActivity() {
 
             val intent = Intent(this, Scanner::class.java)
             startActivity(intent)
+
+        }
+
+        photoButton.setOnClickListener {
+
+            dialog.dismiss()
+
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            startActivityForResult(intent, REQUEST_CODE_GALLERY)
+
+        }
+
+        browseButton.setOnClickListener {
+
+            dialog.dismiss()
+
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "application/pdf" // Limit the selection to PDF files
+            intent.addCategory(Intent.CATEGORY_OPENABLE)
+            startActivityForResult(intent, FILE_PICKER2_EXTRACT_REQUEST_CODE)
 
         }
 
@@ -699,7 +722,18 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == FILE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == REQUEST_CODE_GALLERY && resultCode == RESULT_OK) {
+
+            val selectedImageUri = data?.data
+
+            if (selectedImageUri != null) {
+
+                navController.navigate(R.id.addDocumentsFragment)
+
+            }
+
+        }
+        else if (requestCode == FILE_PICKER_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val uri = data?.data
             if (uri != null) {
                 // Check if the selected file is a PDF
@@ -772,6 +806,24 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+        else if (requestCode == FILE_PICKER2_EXTRACT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
+            val uri = data?.data
+            if (uri != null) {
+
+                if (isPdfFile(uri)) {
+
+                    navController.navigate(R.id.addDocumentsFragment)
+
+                }
+                else {
+                    // The selected file is not a PDF. You can display an error message to the user.
+                    Toast.makeText(this, "The selected file is not a PDF", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
+        }
     }
 
     fun extractTextFromPdf(contentResolver: ContentResolver, pdfUri: Uri): String {
@@ -790,41 +842,6 @@ class MainActivity : AppCompatActivity() {
         pdfInputStream?.close()
 
         return text.toString()
-    }
-
-    private fun revokeAccessToken(accessToken: String) {
-        // Send a POST request to the Dropbox OAuth 2.0 Token Revocation endpoint
-        val url = "https://api.dropboxapi.com/2/auth/token/revoke"
-        val client = OkHttpClient()
-
-        val requestBody = FormBody.Builder()
-            .add("token", accessToken)
-            .build()
-
-        val request = Request.Builder()
-            .url(url)
-            .header("Content-Type", "application/x-www-form-urlencoded")
-            .post(requestBody)
-            .build()
-
-        client.newCall(request).enqueue(object : Callback {
-            override fun onResponse(call: Call, response: Response) {
-                // Handle the response as needed (e.g., check for success)
-                if (response.isSuccessful) {
-                    // Token successfully revoked
-                    App.instance.preferences.edit().clear().apply()
-
-                    openActivity(LoadingActivity::class.java)
-                } else {
-                    // Error occurred while revoking token
-                }
-            }
-
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-                // Handle the network request failure
-            }
-        })
     }
 
     private fun checkPermission() : Boolean {
@@ -856,7 +873,9 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val FILE_PICKER_REQUEST_CODE = 123
         private const val FILE_PICKER_EXTRACT_REQUEST_CODE = 124
+        private const val FILE_PICKER2_EXTRACT_REQUEST_CODE = 198
         private const val FILE_PICKER_LEGAL_REQUEST_CODE = 125
+        private const val REQUEST_CODE_GALLERY = 334
     }
 
 }

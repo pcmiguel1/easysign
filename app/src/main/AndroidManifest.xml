@@ -30,12 +30,10 @@
             android:exported="false"></activity>
 
         <activity
-            android:name=".libraries.scanner.activity.ScanActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:name=".libraries.scanner.activity.ScanActivity" />
 
         <activity
-            android:name=".fragments.scan.Scanner"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:name=".fragments.scan.Scanner" />
 
         <activity
             android:name=".LoadingActivity"

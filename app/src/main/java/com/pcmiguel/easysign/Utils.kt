@@ -161,4 +161,14 @@ object Utils {
         return bMapRotate
     }
 
+    fun navigationBar(v: View, theme: String, activity: Activity) {
+
+        val title = v.findViewById<View>(R.id.toolbar).findViewById<TextView>(R.id.title)
+        title.text = theme
+
+        val backBt = v.findViewById<View>(R.id.back_bt)
+        backBt.setOnClickListener { activity.onBackPressed() }
+
+    }
+
 }

@@ -27,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
 
 class OnBoardingFragment : Fragment() {
 
@@ -81,10 +82,8 @@ class OnBoardingFragment : Fragment() {
         }
 
         binding!!.signinDropboxBtn.setOnClickListener {
-
             login = true
             Auth.startOAuth2Authentication(requireContext(), BuildConfig.APP_KEY_DROPBOX)
-
         }
 
     }
@@ -109,6 +108,7 @@ class OnBoardingFragment : Fragment() {
         super.onResume()
 
         val accessToken = Auth.getOAuth2Token()
+
         if (accessToken != null && login) {
 
             loadingDialog.startLoading()
