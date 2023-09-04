@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_homeFragment2_to_addDocumentsFragment"
             app:destination="@id/addDocumentsFragment" />
+        <action
+            android:id="@+id/action_homeFragment2_to_createDocumentFragment"
+            app:destination="@id/createDocumentFragment" />
     </fragment>
     <fragment
         android:id="@+id/documentsFragment2"
@@ -45,4 +48,9 @@
         android:name="com.pcmiguel.easysign.fragments.addrecipient.AddRecipientFragment"
         android:label="fragment_add_recipient"
         tools:layout="@layout/fragment_add_recipient" />
+    <fragment
+        android:id="@+id/createDocumentFragment"
+        android:name="com.pcmiguel.easysign.fragments.createdocument.CreateDocumentFragment"
+        android:label="fragment_create_document"
+        tools:layout="@layout/fragment_create_document" />
 </navigation>

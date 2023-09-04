@@ -34,6 +34,7 @@ import android.widget.Spinner
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.navigation.findNavController
 import com.blongho.country_data.World
 import com.dropbox.core.DbxException
 import com.dropbox.core.DbxRequestConfig
@@ -713,12 +714,6 @@ class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun isPdfFile(uri: Uri): Boolean {
-        val contentResolver = applicationContext.contentResolver
-        val mimeType = contentResolver.getType(uri)
-        return mimeType == "application/pdf"
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -728,8 +723,12 @@ class MainActivity : AppCompatActivity() {
 
             if (selectedImageUri != null) {
 
-                navController.navigate(R.id.addDocumentsFragment)
+                val bundle = Bundle().apply {
+                    putParcelable("imageUri", selectedImageUri)
+                }
 
+                //navController.navigate(R.id.addDocumentsFragment)
+                navController.navigate(R.id.createDocumentFragment, bundle)
             }
 
         }
@@ -737,7 +736,7 @@ class MainActivity : AppCompatActivity() {
             val uri = data?.data
             if (uri != null) {
                 // Check if the selected file is a PDF
-                if (isPdfFile(uri)) {
+                if (Utils.isPdfFile(uri, applicationContext)) {
                     // The selected file is a PDF, you can now proceed with the upload.
                     // uri contains the URI of the selected file.
                     val contentResolver = applicationContext.contentResolver
@@ -773,7 +772,7 @@ class MainActivity : AppCompatActivity() {
             val uri = data?.data
             if (uri != null) {
                 // Check if the selected file is a PDF
-                if (isPdfFile(uri)) {
+                if (Utils.isPdfFile(uri, applicationContext)) {
                     // The selected file is a PDF, you can now proceed with the upload.
                     // uri contains the URI of the selected file.
                     val contentResolver = applicationContext.contentResolver
@@ -811,7 +810,7 @@ class MainActivity : AppCompatActivity() {
             val uri = data?.data
             if (uri != null) {
 
-                if (isPdfFile(uri)) {
+                if (Utils.isPdfFile(uri, applicationContext)) {
 
                     navController.navigate(R.id.addDocumentsFragment)
 

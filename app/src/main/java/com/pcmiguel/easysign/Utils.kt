@@ -171,4 +171,10 @@ object Utils {
 
     }
 
+    fun isPdfFile(uri: Uri, context: Context): Boolean {
+        val contentResolver = context.contentResolver
+        val mimeType = contentResolver.getType(uri)
+        return mimeType == "application/pdf"
+    }
+
 }

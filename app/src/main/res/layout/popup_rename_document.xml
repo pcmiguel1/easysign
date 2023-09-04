@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background_inset"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rename Document"
+        android:textSize="13sp"
+        android:fontFamily="@font/urbanist_regular"
+        android:textColor="@color/text_color_gray"
+        android:textAlignment="center"/>
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:inputType="text"
+        android:textColor="@color/text_color"
+        android:text="sample"
+        android:backgroundTint="@color/text_color"
+        android:fontFamily="@font/urbanist_regular"
+        android:textSize="16sp"
+        android:imeOptions="actionDone"
+        android:gravity="top|start"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginHorizontal="20dp">
+
+        <TextView
+            android:id="@+id/cancelBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textColor="@color/text_color"
+            android:fontFamily="@font/urbanist_semibold"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/okBtn"
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            android:textColor="@color/text_color"
+            android:fontFamily="@font/urbanist_semibold"
+            android:textSize="18sp"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

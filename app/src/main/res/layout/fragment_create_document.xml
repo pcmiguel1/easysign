@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    tools:context=".fragments.adddocuments.AddDocumentsFragment">
+    tools:context=".fragments.createdocument.CreateDocumentFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -34,50 +33,36 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_below="@id/toolbarLayout"
+            android:layout_below="@+id/toolbarLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/documents"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"/>
-
-            <RelativeLayout
-                android:id="@+id/addDocument"
+            <EditText
+                android:id="@+id/name"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
                 android:layout_marginHorizontal="20dp"
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/custom_button_stroke"
-                android:backgroundTint="@color/black">
+                android:layout_height="match_parent"
+                android:inputType="text"
+                android:hint="Document name"
+                android:textColor="@color/text_color"
+                android:backgroundTint="@color/text_color"
+                android:fontFamily="@font/urbanist_regular"
+                android:textSize="16sp"
+                android:imeOptions="actionNext"
+                android:gravity="top|start"/>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_centerInParent="true"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:src="@drawable/plus"/>
-
-                    <TextView
-                        android:layout_marginStart="5dp"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Add another document"
-                        android:fontFamily="@font/urbanist_semibold"
-                        android:textSize="16sp"
-                        android:textColor="@color/text_color" />
-
-                </LinearLayout>
-
-            </RelativeLayout>
+            <GridView
+                android:id="@+id/fotos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnWidth="90dp"
+                android:horizontalSpacing="20dp"
+                android:numColumns="auto_fit"
+                android:verticalSpacing="20dp"
+                android:layout_marginHorizontal="20dp"/>
 
         </LinearLayout>
 

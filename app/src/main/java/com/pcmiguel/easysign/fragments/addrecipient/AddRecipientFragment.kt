@@ -1,12 +1,17 @@
 package com.pcmiguel.easysign.fragments.addrecipient
 
+import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.pcmiguel.easysign.App
 import com.pcmiguel.easysign.R
 import com.pcmiguel.easysign.Utils
@@ -68,6 +73,31 @@ class AddRecipientFragment : Fragment() {
         })
 
         addRecipientsToList()
+
+        binding!!.addRecipient.setOnClickListener {
+
+            val view : View = layoutInflater.inflate(R.layout.item_bottom_sheet_add_recipient, null)
+            val dialog = BottomSheetDialog(requireContext(), R.style.AppBottomSheetDialogTheme)
+            dialog.setContentView(view)
+            dialog.setCancelable(true)
+
+            val name = dialog.findViewById<EditText>(R.id.name)
+            val email = dialog.findViewById<EditText>(R.id.email)
+            val saveBtn = dialog.findViewById<View>(R.id.saveBtn)
+            val assigntomeBtn = dialog.findViewById<View>(R.id.assigntomeBtn)
+
+            assigntomeBtn!!.setOnClickListener {
+
+                name!!.setText(App.instance.preferences.getString("Name", ""))
+                email!!.setText(App.instance.preferences.getString("Email", ""))
+
+            }
+
+
+
+            dialog.show()
+
+        }
 
     }
 
