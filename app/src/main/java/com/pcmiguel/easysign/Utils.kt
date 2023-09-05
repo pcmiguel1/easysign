@@ -22,7 +22,10 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.auth0.jwt.JWT
-import java.util.ArrayList
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.util.*
 import java.util.regex.Pattern
 
 object Utils {
@@ -175,6 +178,28 @@ object Utils {
         val contentResolver = context.contentResolver
         val mimeType = contentResolver.getType(uri)
         return mimeType == "application/pdf"
+    }
+
+    fun bitmapToUri(context: Context, bitmap: Bitmap): Uri? {
+        var uri: Uri? = null
+
+        try {
+            // Create a temporary file to store the bitmap
+            val tempFile = File(context.cacheDir, "${UUID.randomUUID()}.png")
+
+            // Create an output stream to write the bitmap to the file
+            val outputStream = FileOutputStream(tempFile)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+            outputStream.flush()
+            outputStream.close()
+
+            // Convert the file to a Uri
+            uri = Uri.fromFile(tempFile)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return uri
     }
 
 }

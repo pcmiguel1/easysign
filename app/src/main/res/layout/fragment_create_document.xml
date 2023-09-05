@@ -39,7 +39,7 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/name"
+                android:id="@+id/document_name"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
                 android:layout_marginHorizontal="20dp"

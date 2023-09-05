@@ -16,6 +16,25 @@ class PhotoAdapter(
     var arrayList: ArrayList<Uri>
 ) : BaseAdapter() {
 
+    private lateinit var mListener : onItemClickListener
+    private lateinit var mDeleteListener: onDeleteClickListener
+
+    interface onItemClickListener {
+        fun onItemClick(position: Int)
+    }
+
+    interface onDeleteClickListener {
+        fun onDeleteClick(position: Int)
+    }
+
+    fun setOnItemClickListener(listener: onItemClickListener) {
+        mListener = listener
+    }
+
+    fun setOnDeleteClickListener(listener : onDeleteClickListener) {
+        mDeleteListener = listener
+    }
+
     override fun getCount(): Int {
         return arrayList.size
     }
@@ -30,20 +49,37 @@ class PhotoAdapter(
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 
-        var view : View = View.inflate(context, R.layout.grid_item_photo_list, null)
+        var view : View
 
-        var image: ImageView = view.findViewById(R.id.image_photo)
-        val deleteBtn : View = view.findViewById(R.id.deleteBtn)
+        if (position == 0) {
 
-        var photoItem : Uri = arrayList[position]
+            view = View.inflate(context, R.layout.grid_item_photo_add_list, null)
 
-        if (photoItem != null) {
+            view.setOnClickListener {
+                mListener.onItemClick(position)
+            }
 
-            Log.d("photoItem", photoItem.path.toString())
+        }
+        else {
 
-            Picasso.get()
-                .load(photoItem)
-                .into(image)
+            view = View.inflate(context, R.layout.grid_item_photo_list, null)
+
+            var image: ImageView = view.findViewById(R.id.image_photo)
+            var deleteBtn : View = view.findViewById(R.id.deleteBtn)
+
+            var photoItem : Uri = arrayList[position]
+
+            if (photoItem != null) {
+
+                Picasso.get()
+                    .load(photoItem)
+                    .into(image)
+
+            }
+
+            deleteBtn.setOnClickListener {
+                mDeleteListener.onDeleteClick(position)
+            }
 
         }
 

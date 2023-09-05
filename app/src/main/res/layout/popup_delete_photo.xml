@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_background_inset"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Are you sure you want to delete the selected photo?"
+        android:textSize="15sp"
+        android:fontFamily="@font/urbanist_regular"
+        android:textColor="@color/text_color"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end"
+        android:layout_marginHorizontal="20dp">
+
+        <TextView
+            android:id="@+id/cancelBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:textColor="@color/text_color"
+            android:fontFamily="@font/urbanist_semibold"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/deleteBtn"
+            android:layout_marginStart="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete"
+            android:textColor="@color/text_color"
+            android:fontFamily="@font/urbanist_semibold"
+            android:textSize="18sp"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

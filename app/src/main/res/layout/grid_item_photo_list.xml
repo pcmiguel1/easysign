@@ -4,31 +4,30 @@
     android:layout_height="150dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/deleteBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="100dp"
-        app:cardBackgroundColor="@color/text_color"
-        app:contentPadding="5dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true">
-
-        <ImageView
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:src="@drawable/close"
-            app:tint="@color/white" />
-
-    </androidx.cardview.widget.CardView>
-
     <ImageView
         android:id="@+id/image_photo"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
         android:src="@drawable/profile_template"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:id="@+id/delete_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@color/primaryColorT"
+        android:padding="5dp">
+
+        <ImageView
+            android:id="@+id/deleteBtn"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/delete"
+            android:layout_gravity="center" />
+
+    </LinearLayout>
 
 </RelativeLayout>
