@@ -20,11 +20,15 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.auth0.jwt.JWT
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.util.*
 import java.util.regex.Pattern
 
@@ -200,6 +204,57 @@ object Utils {
         }
 
         return uri
+    }
+
+    fun openPdf(pdfFile: File, context: Context) {
+        val pdfUri = FileProvider.getUriForFile(context, "com.pcmiguel.easysign.provider", pdfFile)
+
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(pdfUri, "application/pdf")
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        context.startActivity(intent)
+    }
+
+    fun formatFileSize(sizeInBytes: Long): String {
+        if (sizeInBytes <= 0) {
+            return "0 B"
+        }
+
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+        val digitGroups = (Math.log10(sizeInBytes.toDouble()) / Math.log10(1024.0)).toInt()
+
+        val formattedSize = String.format("%.2f", sizeInBytes / Math.pow(1024.0, digitGroups.toDouble()))
+        return "$formattedSize ${units[digitGroups]}"
+    }
+
+    fun uriToPdfFile(context: Context, uri: Uri): File? {
+        val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+
+        if (inputStream != null) {
+            try {
+                val pdfFile = createTempPdfFile(context)
+                val outputStream = FileOutputStream(pdfFile)
+                val buffer = ByteArray(4 * 1024) // 4k buffer
+
+                var read: Int
+                while (inputStream.read(buffer).also { read = it } != -1) {
+                    outputStream.write(buffer, 0, read)
+                }
+                outputStream.flush()
+                return pdfFile
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } finally {
+                inputStream.close()
+            }
+        }
+        return null
+    }
+
+    private fun createTempPdfFile(context: Context): File {
+        val timestamp = System.currentTimeMillis()
+        val storageDir = context.getExternalFilesDir(null)
+        return File(storageDir, "temp_$timestamp.pdf")
     }
 
 }

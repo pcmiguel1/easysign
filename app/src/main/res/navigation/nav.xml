@@ -52,5 +52,9 @@
         android:id="@+id/createDocumentFragment"
         android:name="com.pcmiguel.easysign.fragments.createdocument.CreateDocumentFragment"
         android:label="fragment_create_document"
-        tools:layout="@layout/fragment_create_document" />
+        tools:layout="@layout/fragment_create_document" >
+        <action
+            android:id="@+id/action_createDocumentFragment_to_addDocumentsFragment"
+            app:destination="@id/addDocumentsFragment" />
+    </fragment>
 </navigation>

@@ -41,8 +41,8 @@ class RecipientsAdapter(private val list: List<Recipient>) :
 
     class ItemViewHolder(itemView: View, listener: onItemClickListener, optionsListener: onOptionsClickListener) : RecyclerView.ViewHolder(itemView) {
         val name : TextView = itemView.findViewById(R.id.name)
-        val size : TextView = itemView.findViewById(R.id.email)
-        val status : TextView = itemView.findViewById(R.id.status)
+        val email : TextView = itemView.findViewById(R.id.email)
+        val role : TextView = itemView.findViewById(R.id.role)
         val optionsBtn : View = itemView.findViewById(R.id.optionsBtn)
 
         init {
@@ -70,6 +70,13 @@ class RecipientsAdapter(private val list: List<Recipient>) :
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = list[position]
+
+        if (item.me) holder.name.text = item.name + " (Me)"
+        else holder.name.text = item.name
+
+        holder.email.text = item.email
+        holder.role.text = item.role
+
 
     }
 

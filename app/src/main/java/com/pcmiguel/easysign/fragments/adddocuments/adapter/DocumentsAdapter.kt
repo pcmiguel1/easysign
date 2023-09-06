@@ -1,5 +1,6 @@
 package com.pcmiguel.easysign.fragments.adddocuments.adapter
 
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,14 +9,16 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pcmiguel.easysign.R
+import com.pcmiguel.easysign.Utils
 import com.pcmiguel.easysign.fragments.adddocuments.model.Document
 import com.pcmiguel.easysign.services.ApiInterface
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import java.io.File
 import java.lang.Exception
 import java.lang.Math.*
 
-class DocumentsAdapter(private val list: List<Document>) :
+class DocumentsAdapter(private val list: List<File>) :
     RecyclerView.Adapter<DocumentsAdapter.ItemViewHolder>() {
 
     private lateinit var mListener : onItemClickListener
@@ -69,9 +72,12 @@ class DocumentsAdapter(private val list: List<Document>) :
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val item = list[position]
 
+        if (item.name != null && item.name.isNotEmpty()) holder.name.text = item.name.replace(".pdf", "")
+        holder.size.text = Utils.formatFileSize(item.length())
+
     }
 
-    fun getItem(position: Int): Document {
+    fun getItem(position: Int): File {
         return list[position]
     }
 

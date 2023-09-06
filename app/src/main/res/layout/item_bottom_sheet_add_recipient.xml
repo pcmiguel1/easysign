@@ -15,11 +15,22 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="20dp"/>
 
-    <RadioGroup
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Role"
+        android:layout_marginBottom="20dp"
+        android:layout_marginHorizontal="20dp"
+        android:fontFamily="@font/urbanist_bold"
+        android:textSize="15sp"
+        android:textColor="@color/text_color"/>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="20dp">
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,9 +39,11 @@
             android:gravity="center_vertical">
 
             <RadioButton
+                android:id="@+id/needToSignRadio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:buttonTint="@color/custom_radio_button_color"/>
+                android:buttonTint="@color/custom_radio_button_color"
+                android:checked="true"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -66,6 +79,7 @@
             android:gravity="center_vertical">
 
             <RadioButton
+                android:id="@+id/inPersonSignerRadio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/custom_radio_button_color"/>
@@ -104,6 +118,7 @@
             android:gravity="center_vertical">
 
             <RadioButton
+                android:id="@+id/receivesCopyRadio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@color/custom_radio_button_color"/>
@@ -134,7 +149,7 @@
 
         </LinearLayout>
 
-    </RadioGroup>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -22,6 +22,7 @@ import android.widget.GridView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.itextpdf.io.image.ImageDataFactory
 import com.itextpdf.kernel.geom.PageSize
@@ -39,6 +40,7 @@ import com.pcmiguel.easysign.fragments.adddocuments.AddDocumentsFragment
 import com.pcmiguel.easysign.fragments.createdocument.adapter.PhotoAdapter
 import com.pcmiguel.easysign.fragments.createdocument.model.Photo
 import com.pcmiguel.easysign.fragments.scan.Scanner
+import com.pcmiguel.easysign.libraries.LoadingDialog
 import com.pcmiguel.easysign.libraries.scanner.activity.ScanActivity
 import com.pcmiguel.easysign.libraries.scanner.constants.ScanConstants
 import com.pcmiguel.easysign.libraries.scanner.util.ScanUtils
@@ -51,6 +53,11 @@ class CreateDocumentFragment : Fragment() {
     private lateinit var gridView : GridView
     private var photos : ArrayList<Uri> = ArrayList()
     private lateinit var photoAdapter: PhotoAdapter
+
+    private lateinit var loadingDialog: LoadingDialog
+
+    private var newImage = false
+    private var images : MutableList<File> = mutableListOf()
 
 
 
@@ -66,12 +73,29 @@ class CreateDocumentFragment : Fragment() {
         App.instance.mainActivity!!.findViewById<View>(R.id.plus_btn).visibility = View.GONE
 
         // add an empty for the add photo button
-        val emptyUri: Uri = Uri.EMPTY
-        photos.add(emptyUri)
+        if (photos.isEmpty()) {
+            val emptyUri: Uri = Uri.EMPTY
+            photos.add(emptyUri)
+        }
 
-        val imageUri = arguments?.getParcelable<Uri>("imageUri")
-        if (imageUri != null) {
-            photos.add(imageUri)
+        if (arguments != null && requireArguments().containsKey("imageUri")) {
+            val imageUri = arguments?.getParcelable<Uri>("imageUri")
+            if (imageUri != null) {
+                photos.add(imageUri)
+            }
+        }
+
+        if (arguments != null && requireArguments().containsKey("newImage")) {
+
+            newImage = arguments?.getBoolean("newImage") ?: false
+
+        }
+
+        if (arguments != null && requireArguments().containsKey("imagesUri")) {
+
+            val imagesUri = arguments?.getSerializable("imagesUri") as? ArrayList<File>
+            if (imagesUri != null) images.addAll(imagesUri)
+
         }
 
         return fragmentBinding.root
@@ -81,6 +105,8 @@ class CreateDocumentFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         Utils.navigationBar(view, "Create Document", requireActivity())
+
+        loadingDialog = LoadingDialog(requireContext())
 
         gridView = binding!!.fotos
         photoAdapter = PhotoAdapter(requireContext(), photos!!)
@@ -172,7 +198,14 @@ class CreateDocumentFragment : Fragment() {
 
                 val pdfFile =  generatePdfFromUris(documentName.text.toString())
                 if (pdfFile != null) {
-                    openPdf(pdfFile)
+
+                    requireArguments().remove("imageUri")
+                    requireArguments().remove("imagesUri")
+
+                    val bundle = Bundle()
+                    bundle.putSerializable("pdfFile", pdfFile)
+                    if (newImage && images.isNotEmpty()) bundle.putSerializable("pdfsFile", ArrayList(images))
+                    findNavController().navigate(R.id.action_createDocumentFragment_to_addDocumentsFragment, bundle)
                 }
 
             }
@@ -252,16 +285,6 @@ class CreateDocumentFragment : Fragment() {
 
         return Bitmap.createScaledBitmap(bitmap, newWidth.toInt(), newHeight.toInt(), true)
     }
-
-    private fun openPdf(pdfFile: File) {
-        val pdfUri = FileProvider.getUriForFile(requireContext(), "com.pcmiguel.easysign.provider", pdfFile)
-
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.setDataAndType(pdfUri, "application/pdf")
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        startActivity(intent)
-    }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

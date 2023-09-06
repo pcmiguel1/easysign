@@ -3,6 +3,7 @@ package com.pcmiguel.easysign
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -52,6 +53,9 @@ import com.pawcare.pawcare.services.Listener
 import com.pcmiguel.easysign.Utils.openActivity
 import com.pcmiguel.easysign.fragments.adddocuments.AddDocumentsFragment
 import com.pcmiguel.easysign.fragments.scan.Scanner
+import com.pcmiguel.easysign.libraries.scanner.activity.ScanActivity
+import com.pcmiguel.easysign.libraries.scanner.constants.ScanConstants
+import com.pcmiguel.easysign.libraries.scanner.util.ScanUtils
 import com.pcmiguel.easysign.services.ApiAIInterface
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +65,7 @@ import okhttp3.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 
 class MainActivity : AppCompatActivity() {
 
@@ -334,8 +339,10 @@ class MainActivity : AppCompatActivity() {
 
             dialog.dismiss()
 
-            val intent = Intent(this, Scanner::class.java)
-            startActivity(intent)
+            //val intent = Intent(this, Scanner::class.java)
+            //startActivity(intent)
+            val intent = Intent(this, ScanActivity::class.java)
+            startActivityForResult(intent, REQUEST_CODE)
 
         }
 
@@ -812,12 +819,38 @@ class MainActivity : AppCompatActivity() {
 
                 if (Utils.isPdfFile(uri, applicationContext)) {
 
-                    navController.navigate(R.id.addDocumentsFragment)
+                    val filePdf = Utils.uriToPdfFile(this, uri)
+
+                    val bundle = Bundle().apply {
+                        putSerializable("pdfFile", filePdf)
+                    }
+
+                    navController.navigate(R.id.addDocumentsFragment, bundle)
 
                 }
                 else {
                     // The selected file is not a PDF. You can display an error message to the user.
                     Toast.makeText(this, "The selected file is not a PDF", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
+        }
+        else if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
+            if (data != null && data.extras != null) {
+
+                val filePath = data.getStringExtra(ScanConstants.SCANNED_RESULT)
+                val baseBitmap = ScanUtils.decodeBitmapFromFile(filePath, ScanConstants.IMAGE_NAME)
+                val uri = Utils.bitmapToUri(this, baseBitmap)
+                if (uri != null) {
+
+                    val bundle = Bundle().apply {
+                        putParcelable("imageUri", uri)
+                    }
+
+                    navController.navigate(R.id.createDocumentFragment, bundle)
+
                 }
 
             }
@@ -875,6 +908,7 @@ class MainActivity : AppCompatActivity() {
         private const val FILE_PICKER2_EXTRACT_REQUEST_CODE = 198
         private const val FILE_PICKER_LEGAL_REQUEST_CODE = 125
         private const val REQUEST_CODE_GALLERY = 334
+        private const val REQUEST_CODE = 101
     }
 
 }

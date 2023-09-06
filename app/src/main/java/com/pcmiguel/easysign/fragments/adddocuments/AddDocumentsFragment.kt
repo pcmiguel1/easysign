@@ -5,8 +5,10 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -29,18 +31,25 @@ import com.pcmiguel.easysign.Utils.openActivity
 import com.pcmiguel.easysign.databinding.FragmentAddDocumentsBinding
 import com.pcmiguel.easysign.fragments.adddocuments.adapter.DocumentsAdapter
 import com.pcmiguel.easysign.fragments.adddocuments.model.Document
+import com.pcmiguel.easysign.fragments.createdocument.CreateDocumentFragment
 import com.pcmiguel.easysign.fragments.scan.Scanner
+import com.pcmiguel.easysign.libraries.scanner.activity.ScanActivity
+import com.pcmiguel.easysign.libraries.scanner.constants.ScanConstants
+import com.pcmiguel.easysign.libraries.scanner.util.ScanUtils
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 class AddDocumentsFragment : Fragment() {
 
     private var binding: FragmentAddDocumentsBinding? = null
 
     private lateinit var recyclerViewDocuments: RecyclerView
-    private var documents: MutableList<Document> = mutableListOf()
+    private var documents: MutableList<File> = mutableListOf()
     private lateinit var documentsAdapter: DocumentsAdapter
 
     override fun onCreateView(
@@ -53,6 +62,23 @@ class AddDocumentsFragment : Fragment() {
 
         App.instance.mainActivity!!.findViewById<View>(R.id.bottombar).visibility = View.GONE
         App.instance.mainActivity!!.findViewById<View>(R.id.plus_btn).visibility = View.GONE
+
+        if (arguments != null && requireArguments().containsKey("pdfFile")) {
+            val pdfFile = arguments?.getSerializable("pdfFile") as File
+            if (pdfFile != null) {
+                documents.add(pdfFile)
+            }
+        }
+
+        if (arguments != null && requireArguments().containsKey("pdfsFile")) {
+
+            val imagesUri = arguments?.getSerializable("pdfsFile") as? ArrayList<File>
+
+            if (imagesUri != null && imagesUri.isNotEmpty()) {
+                documents.addAll(imagesUri)
+            }
+
+        }
 
         return fragmentBinding.root
     }
@@ -73,6 +99,8 @@ class AddDocumentsFragment : Fragment() {
             override fun onItemClick(position: Int) {
 
                 val item = documentsAdapter.getItem(position)
+
+                Utils.openPdf(item, requireContext())
 
             }
 
@@ -108,11 +136,31 @@ class AddDocumentsFragment : Fragment() {
                     val cancelBtn = mDialogView.findViewById<View>(R.id.cancelBtn)
                     val okBtn = mDialogView.findViewById<View>(R.id.okBtn)
 
+                    nameText.setText(item.name.replace(".pdf", ""))
+
                     cancelBtn.setOnClickListener {
                         dialog.dismiss()
                     }
 
                     okBtn.setOnClickListener {
+
+                        dialog.dismiss()
+
+                        val newName = nameText.text.toString() + ".pdf"
+
+                        val newPath = item.toPath().resolveSibling(newName)
+                        try {
+                            Files.move(item.toPath(), newPath, StandardCopyOption.REPLACE_EXISTING)
+                            val file = File(newPath.toString())
+
+                            documents.removeAt(position)
+                            documents.add(file)
+
+                            documentsAdapter.notifyItemChanged(position)
+
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
 
                     }
 
@@ -122,7 +170,10 @@ class AddDocumentsFragment : Fragment() {
 
                 deleteBtn!!.setOnClickListener {
 
+                    dialog.dismiss()
 
+                    documents.removeAt(position)
+                    documentsAdapter.notifyItemRemoved(position)
 
                 }
 
@@ -132,8 +183,6 @@ class AddDocumentsFragment : Fragment() {
             }
 
         })
-
-        addDocumentsToList()
 
         binding!!.addDocument.setOnClickListener {
 
@@ -155,8 +204,8 @@ class AddDocumentsFragment : Fragment() {
 
                 dialog.dismiss()
 
-                val intent = Intent(requireContext(), Scanner::class.java)
-                startActivity(intent)
+                val intent = Intent(requireContext(), ScanActivity::class.java)
+                startActivityForResult(intent, REQUEST_CODE)
 
             }
 
@@ -186,21 +235,17 @@ class AddDocumentsFragment : Fragment() {
 
         binding!!.nextBtn.setOnClickListener {
 
-            findNavController().navigate(R.id.action_addDocumentsFragment_to_addRecipientFragment)
+            if (documents.isNotEmpty()) {
+
+                requireArguments().remove("pdfFile")
+                findNavController().navigate(R.id.action_addDocumentsFragment_to_addRecipientFragment)
+
+            } else {
+                Toast.makeText(requireContext(), "Please select at least one document.", Toast.LENGTH_SHORT).show()
+            }
 
         }
 
-
-    }
-
-    private fun addDocumentsToList() {
-
-        documents.clear()
-
-        documents.add(Document("test", "3", ""))
-        documents.add(Document("test", "3", ""))
-
-        documentsAdapter.notifyDataSetChanged()
 
     }
 
@@ -213,7 +258,15 @@ class AddDocumentsFragment : Fragment() {
 
             if (selectedImageUri != null) {
 
+                requireArguments().remove("pdfFile")
 
+                val bundle = Bundle().apply {
+                    putParcelable("imageUri", selectedImageUri)
+                    putSerializable("imagesUri", ArrayList(documents))
+                    putBoolean("newImage", true)
+                }
+
+                findNavController().navigate(R.id.createDocumentFragment, bundle)
 
             }
 
@@ -225,6 +278,14 @@ class AddDocumentsFragment : Fragment() {
 
                 if (Utils.isPdfFile(uri, requireContext())) {
 
+                    val filePdf = Utils.uriToPdfFile(requireContext(), uri)
+
+                    if (filePdf != null) {
+
+                        documents.add(filePdf)
+                        documentsAdapter.notifyDataSetChanged()
+
+                    }
 
                 }
                 else {
@@ -235,12 +296,38 @@ class AddDocumentsFragment : Fragment() {
             }
 
         }
+        else if (requestCode == REQUEST_CODE && resultCode == AppCompatActivity.RESULT_OK) {
+
+            if (data != null && data.extras != null) {
+
+                val filePath = data.getStringExtra(ScanConstants.SCANNED_RESULT)
+                val baseBitmap = ScanUtils.decodeBitmapFromFile(filePath, ScanConstants.IMAGE_NAME)
+                val uri = Utils.bitmapToUri(requireContext(), baseBitmap)
+                if (uri != null) {
+
+                    requireArguments().remove("pdfFile")
+
+                    val bundle = Bundle().apply {
+                        putParcelable("imageUri", uri)
+                        putSerializable("imagesUri", ArrayList(documents))
+                        putBoolean("newImage", true)
+                    }
+
+                    findNavController().navigate(R.id.createDocumentFragment, bundle)
+
+                }
+
+
+            }
+
+        }
 
     }
 
     companion object {
         private const val FILE_PICKER2_EXTRACT_REQUEST_CODE = 198
         private const val REQUEST_CODE_GALLERY = 334
+        private const val REQUEST_CODE = 101
     }
 
 }

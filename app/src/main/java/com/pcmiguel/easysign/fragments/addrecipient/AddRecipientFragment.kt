@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.RadioButton
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -72,8 +74,6 @@ class AddRecipientFragment : Fragment() {
 
         })
 
-        addRecipientsToList()
-
         binding!!.addRecipient.setOnClickListener {
 
             val view : View = layoutInflater.inflate(R.layout.item_bottom_sheet_add_recipient, null)
@@ -83,6 +83,11 @@ class AddRecipientFragment : Fragment() {
 
             val name = dialog.findViewById<EditText>(R.id.name)
             val email = dialog.findViewById<EditText>(R.id.email)
+
+            val needsToSignRadio = dialog.findViewById<RadioButton>(R.id.needToSignRadio)
+            val inPersonSignerRadio = dialog.findViewById<RadioButton>(R.id.inPersonSignerRadio)
+            val receivesCopyRadio = dialog.findViewById<RadioButton>(R.id.receivesCopyRadio)
+
             val saveBtn = dialog.findViewById<View>(R.id.saveBtn)
             val assigntomeBtn = dialog.findViewById<View>(R.id.assigntomeBtn)
 
@@ -93,22 +98,71 @@ class AddRecipientFragment : Fragment() {
 
             }
 
+            needsToSignRadio!!.setOnCheckedChangeListener { buttonView, isChecked ->
+                    if (isChecked) {
+                        inPersonSignerRadio!!.isChecked = false
+                        receivesCopyRadio!!.isChecked = false
+                    }
+            }
+
+            inPersonSignerRadio!!.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (isChecked) {
+                    needsToSignRadio!!.isChecked = false
+                    receivesCopyRadio!!.isChecked = false
+                }
+            }
+
+            receivesCopyRadio!!.setOnCheckedChangeListener { buttonView, isChecked ->
+                if (isChecked) {
+                    inPersonSignerRadio!!.isChecked = false
+                    needsToSignRadio!!.isChecked = false
+                }
+            }
+
+            saveBtn!!.setOnClickListener {
+
+                if (name!!.text.isNotEmpty() && email!!.text.isNotEmpty()) {
+
+                    var exists = false
+                    for (reci in recipients) {
+                        if (email!!.text.toString() == reci.email) exists = true
+                    }
+
+                    if (!exists) {
+
+                        dialog.dismiss()
+
+                        var role = ""
+                        if (needsToSignRadio.isChecked) role = "Needs to sign"
+                        if (inPersonSignerRadio.isChecked) role = "In-person signer"
+                        if (receivesCopyRadio.isChecked) role = "Receives a copy"
+
+                        var me = false
+                        if (App.instance.preferences.getString("Email", "") == email!!.text.toString()) me = true
+
+                        recipients.add(Recipient(name.text.toString(), email.text.toString(), role, me))
+                        recipientsAdapter.notifyDataSetChanged()
+
+                    }
+                    else {
+                        Toast.makeText(requireContext(), "Recipient already listed!", Toast.LENGTH_SHORT).show()
+                    }
+
+                }
+                else {
+                    var erro = ""
+                    if (name!!.text.isEmpty()) erro = "Enter a recipient name."
+                    if (email!!.text.isEmpty()) erro = "Enter a recipient email."
+                    Toast.makeText(requireContext(), erro, Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
 
 
             dialog.show()
 
         }
-
-    }
-
-    private  fun addRecipientsToList() {
-
-        recipients.clear()
-
-        recipients.add(Recipient("", "", ""))
-        recipients.add(Recipient("", "", ""))
-
-        recipientsAdapter.notifyDataSetChanged()
 
     }
 
