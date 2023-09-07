@@ -108,24 +108,26 @@ class BackOffice(
 
     fun createEmbeddedSignatureRequest(listener: Listener<Any>?, json: JsonObject) {
 
-        apiInterface.createEmbeddedSignatureRequest(json).enqueue(object : Callback<JsonObject>() {
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+        apiInterface.createEmbeddedSignatureRequest(json).enqueue(object : retrofit2.Callback<ApiInterface.CreateEmbeddedSignatureRequest> {
+            override fun onResponse(call: Call<ApiInterface.CreateEmbeddedSignatureRequest>, response: Response<ApiInterface.CreateEmbeddedSignatureRequest>) {
 
                 if (response.isSuccessful) {
-
-                    try {
-
-                        listener?.onResponse(response.body()!!.asJsonObject)
-
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        serverError(call, response, listener)
-                    }
-
+                    Log.d("reslglgl1", response.toString())
+                    listener?.onResponse(response.body()!!)
                 }
+                else {
+                    val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                    Log.d("reslglgl2", jsonObj.toString())
+                    if (jsonObj.has("error")) {
+                        val errorObject = jsonObj.getJSONObject("error")
+                        val errorMsg = errorObject.getString("error_msg")
+                        listener?.onResponse(errorMsg)
+                    }
+                }
+
             }
 
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+            override fun onFailure(call: Call<ApiInterface.CreateEmbeddedSignatureRequest>, t: Throwable) {
                 clientError(t, null)
             }
 

@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RadioButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +24,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.pawcare.pawcare.services.Listener
 import com.pcmiguel.easysign.App
+import com.pcmiguel.easysign.BuildConfig
 import com.pcmiguel.easysign.R
 import com.pcmiguel.easysign.Utils
 import com.pcmiguel.easysign.databinding.FragmentAddRecipientBinding
@@ -30,6 +32,7 @@ import com.pcmiguel.easysign.fragments.adddocuments.adapter.DocumentsAdapter
 import com.pcmiguel.easysign.fragments.addrecipient.adapter.RecipientsAdapter
 import com.pcmiguel.easysign.fragments.addrecipient.model.Recipient
 import com.pcmiguel.easysign.libraries.LoadingDialog
+import com.pcmiguel.easysign.services.ApiInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -370,7 +373,7 @@ class AddRecipientFragment : Fragment() {
 
                 val json = JsonObject()
 
-                json.addProperty("client_id", "0444b778f0f8859d41e0535e40370be8")
+                json.addProperty("client_id", BuildConfig.CLIENT_ID)
                 json.addProperty("title", "teste")
                 json.addProperty("subject", "teste")
                 json.addProperty("message", "teste")
@@ -381,7 +384,7 @@ class AddRecipientFragment : Fragment() {
                 for ((count, recipient) in recipients.withIndex()) {
 
                     val signer = JsonObject()
-                    ccEmails.add(recipient.email)
+                    //ccEmails.add(recipient.email)
                     signer.addProperty("email_address", recipient.email)
                     signer.addProperty("name", recipient.name)
                     signer.addProperty("order", count)
@@ -414,11 +417,56 @@ class AddRecipientFragment : Fragment() {
                 App.instance.backOffice.createEmbeddedSignatureRequest(object : Listener<Any> {
                     override fun onResponse(response: Any?) {
 
+                        GlobalScope.launch(Dispatchers.IO) {
+                            // You can update the UI from the main thread if needed
+                            withContext(Dispatchers.Main) {
+                                loadingDialog.isDismiss()
+                            }
+                        }
+
                        if (isAdded) {
 
-                           if (response != null) {
+                           if (response != null && response is ApiInterface.CreateEmbeddedSignatureRequest) {
+
+                               GlobalScope.launch(Dispatchers.IO) {
+                                   withContext(Dispatchers.Main) {
+                                       findNavController().navigate(R.id.homeFragment2)
+                                   }
+                               }
 
                                Toast.makeText(requireContext(), "document sent!", Toast.LENGTH_SHORT).show()
+
+                           }
+                           else if (response != null && response is String) {
+
+                               val mDialogView = LayoutInflater.from(requireContext()).inflate(R.layout.popup_error_message, null)
+
+                               val builder = AlertDialog.Builder(requireContext())
+                                   .setView(mDialogView)
+                                   .setCancelable(false)
+
+                               val dialog = builder.create()
+                               dialog.window?.setBackgroundDrawable(
+                                   ColorDrawable(
+                                       Color.TRANSPARENT)
+                               )
+
+                               val errorMessage = mDialogView.findViewById<TextView>(R.id.message)
+                               val okBtn = mDialogView.findViewById<View>(R.id.okBtn)
+
+                               errorMessage.text = response
+
+                               okBtn.setOnClickListener {
+                                   dialog.dismiss()
+
+                                   GlobalScope.launch(Dispatchers.IO) {
+                                       withContext(Dispatchers.Main) {
+                                           findNavController().navigate(R.id.homeFragment2)
+                                       }
+                                   }
+                               }
+
+                               dialog.show()
 
                            }
 
@@ -427,13 +475,6 @@ class AddRecipientFragment : Fragment() {
                     }
 
                 }, json)
-
-                // You can update the UI from the main thread if needed
-                withContext(Dispatchers.Main) {
-                    // Update the UI or display a success message
-                    loadingDialog.isDismiss()
-                    findNavController().navigate(R.id.homeFragment2)
-                }
 
             } catch (e: Exception) {
                 e.printStackTrace()

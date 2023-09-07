@@ -21,7 +21,7 @@ interface ApiInterface {
 
     @Headers("Content-Type: application/json")
     @POST("signature_request/create_embedded")
-    fun createEmbeddedSignatureRequest(@Body jsonObject: JsonObject) : Call<JsonObject>
+    fun createEmbeddedSignatureRequest(@Body jsonObject: JsonObject) : Call<CreateEmbeddedSignatureRequest>
 
     @Headers("Content-Type: application/json")
     @GET("signature_request/list")
@@ -46,6 +46,13 @@ interface ApiInterface {
 
         @SerializedName("email_address")
         var emailAddress: String? = null
+
+    }
+
+    class CreateEmbeddedSignatureRequest {
+
+        @SerializedName("signature_request")
+        var signatureRequest: SignatureRequest? = null
 
     }
 

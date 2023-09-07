@@ -25,24 +25,34 @@ import com.dropbox.core.DbxException
 import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.android.Auth
 import com.dropbox.core.v2.DbxClientV2
+import com.dropbox.core.v2.files.WriteMode
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.pawcare.pawcare.services.Listener
 import com.pcmiguel.easysign.*
 import com.pcmiguel.easysign.Utils.openActivity
 import com.pcmiguel.easysign.databinding.FragmentAddDocumentsBinding
 import com.pcmiguel.easysign.fragments.adddocuments.adapter.DocumentsAdapter
 import com.pcmiguel.easysign.fragments.adddocuments.model.Document
+import com.pcmiguel.easysign.fragments.addrecipient.model.Recipient
 import com.pcmiguel.easysign.fragments.createdocument.CreateDocumentFragment
 import com.pcmiguel.easysign.fragments.scan.Scanner
+import com.pcmiguel.easysign.libraries.LoadingDialog
 import com.pcmiguel.easysign.libraries.scanner.activity.ScanActivity
 import com.pcmiguel.easysign.libraries.scanner.constants.ScanConstants
 import com.pcmiguel.easysign.libraries.scanner.util.ScanUtils
+import com.pcmiguel.easysign.services.ApiInterface
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import java.util.*
+import kotlin.collections.ArrayList
 
 class AddDocumentsFragment : Fragment() {
 
@@ -51,6 +61,10 @@ class AddDocumentsFragment : Fragment() {
     private lateinit var recyclerViewDocuments: RecyclerView
     private var documents: MutableList<File> = mutableListOf()
     private lateinit var documentsAdapter: DocumentsAdapter
+
+    private var noRecipients = false
+
+    private lateinit var loadingDialog: LoadingDialog
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -80,6 +94,12 @@ class AddDocumentsFragment : Fragment() {
 
         }
 
+        if (arguments != null && requireArguments().containsKey("noRecipients")) {
+
+            noRecipients = arguments?.getBoolean("noRecipients") ?: false
+
+        }
+
         return fragmentBinding.root
     }
 
@@ -87,6 +107,11 @@ class AddDocumentsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         Utils.navigationBar(view, "Add Documents", requireActivity())
+
+        loadingDialog = LoadingDialog(requireContext())
+
+        if (noRecipients) binding!!.nextBtn.text = "Send"
+        else binding!!.nextBtn.text = "Next"
 
         recyclerViewDocuments = binding!!.documents
         recyclerViewDocuments.setHasFixedSize(true)
@@ -239,11 +264,21 @@ class AddDocumentsFragment : Fragment() {
 
                 requireArguments().remove("pdfFile")
 
-                val bundle = Bundle().apply {
-                    putSerializable("documents", ArrayList(documents))
-                }
+                if (noRecipients) {
 
-                findNavController().navigate(R.id.action_addDocumentsFragment_to_addRecipientFragment, bundle)
+                    loadingDialog.startLoading()
+                    uploadDocumentsToDropbox(documents)
+
+                }
+                else {
+
+                    val bundle = Bundle().apply {
+                        putSerializable("documents", ArrayList(documents))
+                    }
+
+                    findNavController().navigate(R.id.action_addDocumentsFragment_to_addRecipientFragment, bundle)
+
+                }
 
             } else {
                 Toast.makeText(requireContext(), "Please select at least one document.", Toast.LENGTH_SHORT).show()
@@ -327,6 +362,153 @@ class AddDocumentsFragment : Fragment() {
 
         }
 
+    }
+
+    private fun uploadDocumentsToDropbox(documentFiles: List<File>) {
+        // Start a coroutine in the background
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val remoteFolderPath = "/documents"
+                val client = DbxClientV2(
+                    DbxRequestConfig.newBuilder("easysignapp").build(),
+                    App.instance.preferences.getString("AccessToken", "")
+                )
+
+                val uploadedPaths : ArrayList<String> = arrayListOf()
+
+                for (documentFile in documentFiles) {
+
+                    val remoteFileName = documentFile.name.replace(".pdf", "") + "_" + App.instance.preferences.getString("UserId", "") + "_" + Date().time.toString() + ".pdf"
+
+                    val remotePath = "$remoteFolderPath/$remoteFileName"
+                    val inputStream = documentFile.inputStream()
+                    val fileMetadata = client.files().uploadBuilder(remotePath)
+                        .withMode(WriteMode.OVERWRITE) // Specify this line to overwrite the existing file
+                        .uploadAndFinish(inputStream)
+
+                    // Handle the result of the upload here, if needed
+                    val uploadedPath = fileMetadata.pathDisplay
+
+                    // Get the shared link for the uploaded file
+                    val sharedLink = client.sharing().createSharedLinkWithSettings(uploadedPath)
+                    val sharedLinkUrl = sharedLink.url
+
+                    uploadedPaths.add(sharedLinkUrl)
+
+                }
+
+                val json = JsonObject()
+
+                json.addProperty("client_id", BuildConfig.CLIENT_ID)
+                json.addProperty("title", "teste")
+                json.addProperty("subject", "teste")
+                json.addProperty("message", "teste")
+
+                val signers = JsonArray()
+                val ccEmails = JsonArray()
+
+                val email = App.instance.preferences.getString("Email", "")
+                val name = App.instance.preferences.getString("Name", "")
+
+                val signer = JsonObject()
+                //ccEmails.add(email)
+                signer.addProperty("email_address", email)
+                signer.addProperty("name", name)
+                signer.addProperty("order", 0)
+                signers.add(signer)
+
+                json.add("signers", signers)
+                json.add("cc_email_addresses", ccEmails)
+
+                val files = JsonArray()
+
+                for (uploadedPath in uploadedPaths) {
+                    files.add(uploadedPath)
+                }
+
+                json.add("file_urls", files)
+
+                val options = JsonObject()
+                options.addProperty("draw", true)
+                options.addProperty("type", true)
+                options.addProperty("upload", true)
+                options.addProperty("phone", false)
+                options.addProperty("default_type", "draw")
+
+                json.add("signing_options", options)
+
+                json.addProperty("test_mode", true)
+
+
+                App.instance.backOffice.createEmbeddedSignatureRequest(object : Listener<Any> {
+                    override fun onResponse(response: Any?) {
+
+                        GlobalScope.launch(Dispatchers.IO) {
+                            // You can update the UI from the main thread if needed
+                            withContext(Dispatchers.Main) {
+                                loadingDialog.isDismiss()
+                            }
+                        }
+
+                        if (isAdded) {
+
+                            if (response != null && response is ApiInterface.CreateEmbeddedSignatureRequest) {
+
+                                GlobalScope.launch(Dispatchers.IO) {
+                                    withContext(Dispatchers.Main) {
+                                        findNavController().navigate(R.id.homeFragment2)
+                                    }
+                                }
+
+                                Toast.makeText(requireContext(), "document sent!", Toast.LENGTH_SHORT).show()
+
+                            }
+                            else if (response != null && response is String) {
+
+                                val mDialogView = LayoutInflater.from(requireContext()).inflate(R.layout.popup_error_message, null)
+
+                                val builder = AlertDialog.Builder(requireContext())
+                                    .setView(mDialogView)
+                                    .setCancelable(false)
+
+                                val dialog = builder.create()
+                                dialog.window?.setBackgroundDrawable(
+                                    ColorDrawable(
+                                        Color.TRANSPARENT)
+                                )
+
+                                val errorMessage = mDialogView.findViewById<TextView>(R.id.message)
+                                val okBtn = mDialogView.findViewById<View>(R.id.okBtn)
+
+                                errorMessage.text = response
+
+                                okBtn.setOnClickListener {
+                                    dialog.dismiss()
+
+                                    GlobalScope.launch(Dispatchers.IO) {
+                                        withContext(Dispatchers.Main) {
+                                            findNavController().navigate(R.id.homeFragment2)
+                                        }
+                                    }
+
+                                }
+
+                                dialog.show()
+
+                            }
+
+                        }
+
+                    }
+
+                }, json)
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // Handle any exceptions that may occur during the Dropbox upload
+                // You can also update the UI with an error message from the main thread
+            }
+        }
     }
 
     companion object {

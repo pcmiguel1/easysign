@@ -75,6 +75,9 @@ class MainActivity : AppCompatActivity() {
     private var isExpanded = false
     private var fileUploaded = false
     private var extractedText = ""
+
+    private var noRecipients = false
+
     private val fromBottomFabAnim : Animation by lazy {
         AnimationUtils.loadAnimation(this, R.anim.from_bottom_fab)
     }
@@ -267,11 +270,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         signBtn.setOnClickListener {
-            optionsDocument()
+            optionsDocument(true)
         }
 
         sendBtn.setOnClickListener {
-            optionsDocument()
+            optionsDocument(false)
         }
 
         aiBtn.setOnClickListener {
@@ -317,7 +320,9 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun optionsDocument() {
+    private fun optionsDocument(yourself : Boolean) {
+
+        noRecipients = yourself
 
         val mDialogView = LayoutInflater.from(this).inflate(R.layout.popup_options_documents, null)
 
@@ -339,8 +344,6 @@ class MainActivity : AppCompatActivity() {
 
             dialog.dismiss()
 
-            //val intent = Intent(this, Scanner::class.java)
-            //startActivity(intent)
             val intent = Intent(this, ScanActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE)
 
@@ -732,6 +735,7 @@ class MainActivity : AppCompatActivity() {
 
                 val bundle = Bundle().apply {
                     putParcelable("imageUri", selectedImageUri)
+                    putBoolean("noRecipients", noRecipients)
                 }
 
                 //navController.navigate(R.id.addDocumentsFragment)
@@ -823,6 +827,7 @@ class MainActivity : AppCompatActivity() {
 
                     val bundle = Bundle().apply {
                         putSerializable("pdfFile", filePdf)
+                        putBoolean("noRecipients", noRecipients)
                     }
 
                     navController.navigate(R.id.addDocumentsFragment, bundle)
@@ -847,6 +852,7 @@ class MainActivity : AppCompatActivity() {
 
                     val bundle = Bundle().apply {
                         putParcelable("imageUri", uri)
+                        putBoolean("noRecipients", noRecipients)
                     }
 
                     navController.navigate(R.id.createDocumentFragment, bundle)

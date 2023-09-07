@@ -59,6 +59,7 @@ class CreateDocumentFragment : Fragment() {
     private var newImage = false
     private var images : MutableList<File> = mutableListOf()
 
+    private var noRecipients = false
 
 
     override fun onCreateView(
@@ -95,6 +96,12 @@ class CreateDocumentFragment : Fragment() {
 
             val imagesUri = arguments?.getSerializable("imagesUri") as? ArrayList<File>
             if (imagesUri != null) images.addAll(imagesUri)
+
+        }
+
+        if (arguments != null && requireArguments().containsKey("noRecipients")) {
+
+            noRecipients = arguments?.getBoolean("noRecipients") ?: false
 
         }
 
@@ -204,6 +211,7 @@ class CreateDocumentFragment : Fragment() {
 
                     val bundle = Bundle()
                     bundle.putSerializable("pdfFile", pdfFile)
+                    bundle.putBoolean("noRecipients", noRecipients)
                     if (newImage && images.isNotEmpty()) bundle.putSerializable("pdfsFile", ArrayList(images))
                     findNavController().navigate(R.id.action_createDocumentFragment_to_addDocumentsFragment, bundle)
                 }

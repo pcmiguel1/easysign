@@ -22,6 +22,7 @@ android {
 
         buildConfigField "String", "SERVICE_URL", "\"https://api.hellosign.com/v3/\""
         buildConfigField "String", "API_KEY", "\"301f2047c71d1c795191c6fb4fcd0f9794c6b52eb7884c537a21d1b38306aff1\""
+        buildConfigField "String", "CLIENT_ID", "\"0444b778f0f8859d41e0535e40370be8\""
 
         buildConfigField "String", "SERVICE_URL_AI", "\"https://api.nova-oss.com/v1/\""
         buildConfigField "String", "API_AI_KEY", "\"nv-rZXtFIfAcv7uXDiiTjpCN0V4x0SSd8DYvYW6JG2av6j57XaH\""
