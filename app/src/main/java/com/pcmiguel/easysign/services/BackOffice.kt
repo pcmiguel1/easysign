@@ -1,13 +1,17 @@
 package com.pcmiguel.easysign.services
 
 import android.content.SharedPreferences
+import android.util.Base64
 import android.util.Log
 import com.google.gson.JsonObject
+import com.pawcare.pawcare.services.Callback
 import com.pawcare.pawcare.services.Listener
+import com.pcmiguel.easysign.App
 import com.pcmiguel.easysign.BuildConfig
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -41,9 +45,20 @@ class BackOffice(
 
                 val token = BuildConfig.API_KEY
 
-                val originalRequest = chain.request()
+                /*val originalRequest = chain.request()
                 val request: Request = originalRequest.newBuilder()
                     .header("Authorization", "Bearer $token")
+                    .build()
+                chain.proceed(request)*/
+
+                val username = token
+                val password = ""
+                val credentials = "$username:$password"
+                val basicAuth = "Basic " + Base64.encodeToString(credentials.toByteArray(), Base64.NO_WRAP)
+
+                val originalRequest = chain.request()
+                val request: Request = originalRequest.newBuilder()
+                    .header("Authorization", basicAuth)
                     .build()
                 chain.proceed(request)
 
@@ -90,6 +105,119 @@ class BackOffice(
         return retrofitAI!!
 
     }
+
+    fun createEmbeddedSignatureRequest(listener: Listener<Any>?, json: JsonObject) {
+
+        apiInterface.createEmbeddedSignatureRequest(json).enqueue(object : Callback<JsonObject>() {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+
+                if (response.isSuccessful) {
+
+                    try {
+
+                        listener?.onResponse(response.body()!!.asJsonObject)
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        serverError(call, response, listener)
+                    }
+
+                }
+            }
+
+            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
+                clientError(t, null)
+            }
+
+        })
+
+    }
+
+    fun getAccount(listener: Listener<Any>?, email: String) {
+
+        apiInterface.getAccount(email).enqueue(object : retrofit2.Callback<ApiInterface.AccountResponse> {
+            override fun onResponse(
+                call: Call<ApiInterface.AccountResponse>,
+                response: Response<ApiInterface.AccountResponse>
+            ) {
+                if (response.isSuccessful) {
+
+                    listener?.onResponse(response.body()!!)
+
+                }
+            }
+
+            override fun onFailure(call: Call<ApiInterface.AccountResponse>, t: Throwable) {
+                clientError(t, null)
+            }
+        })
+
+    }
+
+    fun createAccount(listener: Listener<Any>?, json: JsonObject) {
+
+        apiInterface.createAccount(json).enqueue(object : retrofit2.Callback<ApiInterface.AccountResponse> {
+            override fun onResponse(
+                call: Call<ApiInterface.AccountResponse>,
+                response: Response<ApiInterface.AccountResponse>
+            ) {
+
+                if (response.isSuccessful) {
+
+                    listener?.onResponse(response.body()!!)
+
+                }
+                else {
+                    val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                    if (jsonObj.has("error")) {
+                        val errorObject = jsonObj.getJSONObject("error")
+                        val errorMsg = errorObject.getString("error_msg")
+                        listener?.onResponse(errorMsg)
+                    }
+                }
+
+            }
+
+            override fun onFailure(call: Call<ApiInterface.AccountResponse>, t: Throwable) {
+                clientError(t, null)
+            }
+
+        })
+
+    }
+
+    fun listSignatureRequests(listener: Listener<Any>?, page: Int, pageSize: Int, query: String) {
+
+        apiInterface.listSignatureRequests(
+            App.instance.preferences.getString("AccountId", "")!!,
+            page,
+            pageSize,
+            query
+        ).enqueue(object : retrofit2.Callback<ApiInterface.SignatureRequests> {
+            override fun onResponse(
+                call: Call<ApiInterface.SignatureRequests>,
+                response: Response<ApiInterface.SignatureRequests>
+            ) {
+
+                if (response.isSuccessful) {
+
+                    listener?.onResponse(response.body())
+
+                }
+                else {
+                    serverError(call, response, listener)
+                }
+
+            }
+
+            override fun onFailure(call: Call<ApiInterface.SignatureRequests>, t: Throwable) {
+                clientError(t, null)
+            }
+
+        })
+
+    }
+
 
     fun chatAI(listener: Listener<Any>?, json: JsonObject) {
 

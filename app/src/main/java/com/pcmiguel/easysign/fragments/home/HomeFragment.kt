@@ -3,6 +3,7 @@ package com.pcmiguel.easysign.fragments.home
 import android.Manifest
 import android.app.AlertDialog
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -28,6 +29,7 @@ import com.dropbox.core.v2.files.FileMetadata
 import com.dropbox.core.v2.files.WriteMode
 import com.github.gcacace.signaturepad.views.SignaturePad
 import com.google.android.material.card.MaterialCardView
+import com.pawcare.pawcare.services.Listener
 import com.pcmiguel.easysign.App
 import com.pcmiguel.easysign.R
 import com.pcmiguel.easysign.databinding.FragmentHomeBinding
@@ -48,7 +50,7 @@ class HomeFragment : Fragment() {
     private var binding: FragmentHomeBinding? = null
 
     private lateinit var recyclerViewRequests: RecyclerView
-    private var requests: MutableList<ApiInterface.Requests> = mutableListOf()
+    private var requests: MutableList<ApiInterface.SignatureRequest> = mutableListOf()
     private lateinit var requestsAdapter: RequestsAdapter
 
     private lateinit var loadingDialog: LoadingDialog
@@ -98,9 +100,36 @@ class HomeFragment : Fragment() {
         }
 
         binding!!.allBtn.setOnClickListener {
-
             findNavController().navigate(R.id.documentsFragment2)
+        }
 
+        binding!!.needActionBtn.setOnClickListener {
+
+            val bundle = Bundle().apply {
+                putInt("tabPosition", 0)
+            }
+            findNavController().navigate(R.id.documentsFragment2, bundle)
+        }
+
+        binding!!.waitingForOtherBtn.setOnClickListener {
+            val bundle = Bundle().apply {
+                putInt("tabPosition", 1)
+            }
+            findNavController().navigate(R.id.documentsFragment2, bundle)
+        }
+
+        binding!!.completedBtn.setOnClickListener {
+            val bundle = Bundle().apply {
+                putInt("tabPosition", 2)
+            }
+            findNavController().navigate(R.id.documentsFragment2, bundle)
+        }
+
+        binding!!.rejectedBtn.setOnClickListener {
+            val bundle = Bundle().apply {
+                putInt("tabPosition", 3)
+            }
+            findNavController().navigate(R.id.documentsFragment2, bundle)
         }
 
         val signature = binding!!.signature
@@ -122,16 +151,100 @@ class HomeFragment : Fragment() {
 
     private fun addRequestsToList() {
 
+        loadingDialog.startLoading()
+
         requests.clear()
 
-        recyclerViewRequests.visibility = View.VISIBLE
+        var countComplete = 0
+        var countNeedsAction = 0
+        var countWaitingForOther = 0
+        var countRejected = 0
 
-        requests.add(ApiInterface.Requests())
-        requests.add(ApiInterface.Requests())
-        requests.add(ApiInterface.Requests())
+        App.instance.backOffice.listSignatureRequests(object : Listener<Any> {
+            override fun onResponse(response: Any?) {
 
-        requestsAdapter.notifyDataSetChanged()
+                loadingDialog.isDismiss()
 
+                if (isAdded) {
+
+                    if (response != null && response is ApiInterface.SignatureRequests) {
+
+                        val list = response.signatureRequests
+
+                        if (list!!.isNotEmpty()) {
+
+                            for (sig in list) {
+
+                                val isComplete = sig.isComplete
+                                val isDeclined = sig.isDeclined
+
+                                //completed
+                                if (isComplete) {
+                                    countComplete++
+                                }
+                                else {
+
+                                    if (sig.signatures != null) {
+
+                                        val signers = sig.signatures?.toMutableList() ?: mutableListOf()
+
+                                        var needsAction = false
+                                        for (signer in signers) {
+                                            if (signer.signerEmailAddress == App.instance.preferences.getString("Email", "") && signer.statusCode == "awaiting_signature") {
+                                                needsAction = true
+                                                break
+                                            }
+                                        }
+
+                                        if (needsAction) {
+                                            //needs action
+                                            countNeedsAction++
+                                        }
+                                        else {
+                                            //Waiting for other
+                                            countWaitingForOther++
+                                        }
+
+                                    }
+
+                                }
+
+                                //rejected
+                                if (isDeclined) {
+                                    countRejected++
+                                }
+
+                            }
+
+                            binding!!.needAction.text = countNeedsAction.toString()
+                            binding!!.waitingForOther.text = countWaitingForOther.toString()
+                            binding!!.completed.text = countComplete.toString()
+                            binding!!.rejected.text = countRejected.toString()
+
+
+
+                            recyclerViewRequests.visibility = View.VISIBLE
+                            binding!!.empty.visibility = View.GONE
+                            requests.addAll(list.take(10))
+                            requestsAdapter.notifyDataSetChanged()
+
+                        }
+                        else {
+                            recyclerViewRequests.visibility = View.GONE
+                            binding!!.empty.visibility = View.VISIBLE
+                        }
+
+                    }
+                    else {
+                        recyclerViewRequests.visibility = View.GONE
+                        binding!!.empty.visibility = View.VISIBLE
+                    }
+
+                }
+
+            }
+
+        }, 1, 100, "")
 
     }
 

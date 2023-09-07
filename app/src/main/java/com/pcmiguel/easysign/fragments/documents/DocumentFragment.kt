@@ -8,10 +8,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.pawcare.pawcare.services.Listener
 import com.pcmiguel.easysign.App
 import com.pcmiguel.easysign.R
 import com.pcmiguel.easysign.databinding.FragmentDocumentBinding
 import com.pcmiguel.easysign.fragments.home.adapter.RequestsAdapter
+import com.pcmiguel.easysign.libraries.LoadingDialog
 import com.pcmiguel.easysign.services.ApiInterface
 
 private const val ARG_TYPE = "ARG_TYPE"
@@ -22,8 +24,10 @@ class DocumentFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var swipeRefresh: SwipeRefreshLayout
-    private var requests: MutableList<ApiInterface.Requests> = mutableListOf()
+    private var requests: MutableList<ApiInterface.SignatureRequest> = mutableListOf()
     private lateinit var requestsAdapter: RequestsAdapter
+
+    private lateinit var loadingDialog: LoadingDialog
 
     private var type: Int = 0
 
@@ -51,6 +55,8 @@ class DocumentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        loadingDialog = LoadingDialog(requireContext())
+
         swipeRefresh = binding!!.swipeRefresh
 
         recyclerView = binding!!.documents
@@ -70,38 +76,85 @@ class DocumentFragment : Fragment() {
 
         })
 
+        //addRequestsToList(filter)
+        //setSwipeRefresh(filter)
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        var filter = ""
+
         when (type) {
 
             0 -> {
                 binding!!.emptyText.text = "Documents for you to sign will be displayed here."
+                filter = "awaiting_my_signature:true"
             }
 
             1 -> {
                 binding!!.emptyText.text = "Documents waiting for others to complete signing will be displayed here."
+                filter = "awaiting_my_signature:false"
             }
 
             2 -> {
                 binding!!.emptyText.text = "No completed documents yet."
+                filter = "complete:true"
             }
 
             3 -> {
                 binding!!.emptyText.text = "No canceled documents yet."
+                filter = "declined:true"
             }
 
         }
 
-        addRequestsToList()
-        setSwipeRefresh()
+        addRequestsToList(filter)
+        setSwipeRefresh(filter)
 
     }
 
-    private fun addRequestsToList() {
+    private fun addRequestsToList(filter: String) {
 
+        loadingDialog.startLoading()
         requests.clear()
 
-        requests.add(ApiInterface.Requests())
-        requests.add(ApiInterface.Requests())
-        requests.add(ApiInterface.Requests())
+        App.instance.backOffice.listSignatureRequests(object : Listener<Any> {
+            override fun onResponse(response: Any?) {
+
+                loadingDialog.isDismiss()
+
+                if (isAdded) {
+
+                    if (response != null && response is ApiInterface.SignatureRequests) {
+
+                        val list = response.signatureRequests
+
+                        if (list!!.isNotEmpty()) {
+
+                            recyclerView.visibility = View.VISIBLE
+                            binding!!.empty.visibility = View.GONE
+                            requests.addAll(list)
+                            requestsAdapter.notifyDataSetChanged()
+
+                        }
+                        else {
+                            recyclerView.visibility = View.GONE
+                            binding!!.empty.visibility = View.VISIBLE
+                        }
+
+                    }
+                    else {
+                        recyclerView.visibility = View.GONE
+                        binding!!.empty.visibility = View.VISIBLE
+                    }
+
+                }
+
+            }
+
+        },1, 100, filter)
 
         if (requests.isEmpty()) {
             recyclerView.visibility = View.GONE
@@ -116,11 +169,11 @@ class DocumentFragment : Fragment() {
 
     }
 
-    private fun setSwipeRefresh() {
+    private fun setSwipeRefresh(filter: String) {
 
         swipeRefresh.setOnRefreshListener {
 
-            addRequestsToList()
+            addRequestsToList(filter)
             swipeRefresh.isRefreshing = false
 
         }

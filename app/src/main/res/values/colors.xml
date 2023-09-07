@@ -21,6 +21,15 @@
     <color name="need_action">#fff4de</color>
     <color name="need_action2">#e5a500</color>
 
+    <color name="completed">#edf9ef</color>
+    <color name="complted2">#3db46f</color>
+
+    <color name="waiting">#d6e7f6</color>
+    <color name="waiting2">#4e84b3</color>
+
+    <color name="rejected">#fdd5cd</color>
+    <color name="rejected2">#ce482c</color>
+
     <color name="red">#DD5656</color>
     <color name="blue">#0FA9EF</color>
 

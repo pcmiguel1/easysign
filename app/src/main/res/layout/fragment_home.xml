@@ -68,6 +68,7 @@
                     android:weightSum="1">
 
                     <LinearLayout
+                        android:id="@+id/needActionBtn"
                         android:layout_width="0dp"
                         android:layout_weight="0.5"
                         android:layout_height="wrap_content"
@@ -92,6 +93,7 @@
                                 app:tint="@color/white" />
 
                             <TextView
+                                android:id="@+id/needAction"
                                 android:layout_marginStart="10dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -130,6 +132,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/waitingForOtherBtn"
                         android:layout_marginStart="10dp"
                         android:layout_width="0dp"
                         android:layout_weight="0.5"
@@ -154,6 +157,7 @@
                                 app:tint="@color/white" />
 
                             <TextView
+                                android:id="@+id/waitingForOther"
                                 android:layout_marginStart="10dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -202,6 +206,7 @@
                     android:weightSum="1">
 
                     <LinearLayout
+                        android:id="@+id/completedBtn"
                         android:layout_width="0dp"
                         android:layout_weight="0.5"
                         android:layout_height="wrap_content"
@@ -226,6 +231,7 @@
                                 app:tint="@color/white" />
 
                             <TextView
+                                android:id="@+id/completed"
                                 android:layout_marginStart="10dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -264,6 +270,7 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/rejectedBtn"
                         android:layout_marginStart="10dp"
                         android:layout_width="0dp"
                         android:layout_weight="0.5"
@@ -288,6 +295,7 @@
                                 app:tint="@color/white" />
 
                             <TextView
+                                android:id="@+id/rejected"
                                 android:layout_marginStart="10dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

@@ -7,17 +7,7 @@
     android:orientation="vertical"
     android:layout_marginVertical="10dp">
 
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="13sp"
-        android:text="Contract of employment"
-        android:textColor="@color/text_color"
-        android:fontFamily="@font/urbanist_bold"/>
-
     <LinearLayout
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -31,11 +21,11 @@
             app:cardElevation="0dp">
 
             <ImageView
-                android:id="@+id/category"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:src="@drawable/sign2"
-                android:layout_gravity="center"/>
+                android:id="@+id/image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:src="@drawable/profile_template"/>
 
         </androidx.cardview.widget.CardView>
 
@@ -52,45 +42,79 @@
                 android:layout_marginStart="15dp">
 
                 <TextView
-                    android:id="@+id/name"
+                    android:id="@+id/title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Jane Cooper"
-                    android:fontFamily="@font/urbanist_semibold"
+                    android:fontFamily="@font/urbanist_bold"
                     android:textColor="@color/text_color"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:textSize="15sp"/>
 
-                <TextView
-                    android:id="@+id/names"
-                    android:layout_marginTop="3dp"
+                <LinearLayout
+                    android:layout_marginTop="5dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Me, Cody, Andy"
-                    android:fontFamily="@font/urbanist_semibold"
-                    android:textColor="@color/text_color_gray"
-                    android:textSize="11sp"/>
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical">
+
+                    <LinearLayout
+                        android:id="@+id/statusBackground"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/custom_button"
+                        android:backgroundTint="@color/need_action"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:layout_gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/need_action2"
+                            android:fontFamily="@font/urbanist_semibold"
+                            android:textSize="12sp"/>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_marginStart="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="5dp"
+                            android:layout_height="5dp"
+                            app:cardCornerRadius="100dp"
+                            app:cardBackgroundColor="@color/gray2"
+                            android:layout_marginEnd="5dp"
+                            app:cardElevation="0dp"/>
+
+                        <TextView
+                            android:id="@+id/date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"
+                            android:textColor="@color/gray2"
+                            android:fontFamily="@font/urbanist_semibold"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="@drawable/custom_button"
-                android:backgroundTint="@color/need_action"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="5dp"
-                android:layout_gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Needs action"
-                    android:textColor="@color/need_action2"
-                    android:fontFamily="@font/urbanist_semibold"
-                    android:textSize="12sp"/>
-
-            </LinearLayout>
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/menu_vertical"
+                android:layout_gravity="center"/>
 
         </LinearLayout>
 

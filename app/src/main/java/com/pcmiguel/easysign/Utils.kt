@@ -29,6 +29,7 @@ import java.io.IOException
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
 
@@ -255,6 +256,12 @@ object Utils {
         val timestamp = System.currentTimeMillis()
         val storageDir = context.getExternalFilesDir(null)
         return File(storageDir, "temp_$timestamp.pdf")
+    }
+
+    fun formatDate(longDate: Long): String {
+        val dateFormat = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
+        val date = Date(longDate)
+        return dateFormat.format(date)
     }
 
 }

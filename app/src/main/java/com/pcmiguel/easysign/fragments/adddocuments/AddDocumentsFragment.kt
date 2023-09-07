@@ -238,7 +238,12 @@ class AddDocumentsFragment : Fragment() {
             if (documents.isNotEmpty()) {
 
                 requireArguments().remove("pdfFile")
-                findNavController().navigate(R.id.action_addDocumentsFragment_to_addRecipientFragment)
+
+                val bundle = Bundle().apply {
+                    putSerializable("documents", ArrayList(documents))
+                }
+
+                findNavController().navigate(R.id.action_addDocumentsFragment_to_addRecipientFragment, bundle)
 
             } else {
                 Toast.makeText(requireContext(), "Please select at least one document.", Toast.LENGTH_SHORT).show()
