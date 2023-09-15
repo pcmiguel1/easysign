@@ -209,6 +209,32 @@ class OnBoardingFragment : Fragment() {
                                                                 }
 
                                                             }
+                                                            else if (response != null && response is String) {
+
+                                                                val mDialogView = LayoutInflater.from(requireContext()).inflate(R.layout.popup_error_message, null)
+
+                                                                val builder = AlertDialog.Builder(requireContext())
+                                                                    .setView(mDialogView)
+                                                                    .setCancelable(false)
+
+                                                                val dialog = builder.create()
+                                                                dialog.window?.setBackgroundDrawable(
+                                                                    ColorDrawable(
+                                                                        Color.TRANSPARENT)
+                                                                )
+
+                                                                val errorMessage = mDialogView.findViewById<TextView>(R.id.message)
+                                                                val okBtn = mDialogView.findViewById<View>(R.id.okBtn)
+
+                                                                errorMessage.text = response
+
+                                                                okBtn.setOnClickListener {
+                                                                    dialog.dismiss()
+                                                                }
+
+                                                                dialog.show()
+
+                                                            }
 
                                                         }
 

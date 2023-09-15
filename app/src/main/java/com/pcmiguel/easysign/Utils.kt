@@ -260,7 +260,7 @@ object Utils {
 
     fun formatDate(longDate: Long): String {
         val dateFormat = SimpleDateFormat("MMM d, yyyy", Locale.getDefault())
-        val date = Date(longDate)
+        val date = Date(longDate * 1000)
         return dateFormat.format(date)
     }
 

@@ -454,13 +454,13 @@ class AddDocumentsFragment : Fragment() {
 
                             if (response != null && response is ApiInterface.CreateEmbeddedSignatureRequest) {
 
+                                Toast.makeText(requireContext(), "document sent!", Toast.LENGTH_SHORT).show()
+
                                 GlobalScope.launch(Dispatchers.IO) {
                                     withContext(Dispatchers.Main) {
                                         findNavController().navigate(R.id.homeFragment2)
                                     }
                                 }
-
-                                Toast.makeText(requireContext(), "document sent!", Toast.LENGTH_SHORT).show()
 
                             }
                             else if (response != null && response is String) {

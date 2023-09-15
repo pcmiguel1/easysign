@@ -90,22 +90,22 @@ class DocumentFragment : Fragment() {
 
             0 -> {
                 binding!!.emptyText.text = "Documents for you to sign will be displayed here."
-                filter = "awaiting_my_signature:true"
+                filter = "needAction"
             }
 
             1 -> {
                 binding!!.emptyText.text = "Documents waiting for others to complete signing will be displayed here."
-                filter = "awaiting_my_signature:false"
+                filter = "waitingOther"
             }
 
             2 -> {
                 binding!!.emptyText.text = "No completed documents yet."
-                filter = "complete:true"
+                filter = "completed"
             }
 
             3 -> {
                 binding!!.emptyText.text = "No canceled documents yet."
-                filter = "declined:true"
+                filter = "canceled"
             }
 
         }
@@ -133,9 +133,65 @@ class DocumentFragment : Fragment() {
 
                         if (list!!.isNotEmpty()) {
 
+                            val finalList = ArrayList<ApiInterface.SignatureRequest>()
+
+                            for (sig in list) {
+
+                                val isComplete = sig.isComplete
+                                val isDeclined = sig.isDeclined
+
+                                when (filter) {
+
+                                    "needAction" -> {
+                                        if (!isComplete && !isDeclined && sig.signatures != null) {
+                                            val signers = sig.signatures?.toMutableList() ?: mutableListOf()
+
+                                            var needsAction = false
+                                            for (signer in signers) {
+                                                if (signer.signerEmailAddress == App.instance.preferences.getString("Email", "") && signer.statusCode == "awaiting_signature") {
+                                                    needsAction = true
+                                                    break
+                                                }
+                                            }
+                                            if (needsAction) {
+                                                finalList.add(sig)
+                                            }
+                                        }
+                                    }
+
+                                    "waitingOther" -> {
+                                        if (!isComplete && !isDeclined && sig.signatures != null) {
+                                            val signers = sig.signatures?.toMutableList() ?: mutableListOf()
+
+                                            var needsAction = false
+                                            for (signer in signers) {
+                                                if (signer.signerEmailAddress == App.instance.preferences.getString("Email", "") && signer.statusCode == "awaiting_signature") {
+                                                    needsAction = true
+                                                    break
+                                                }
+                                            }
+                                            if (!needsAction) {
+                                                finalList.add(sig)
+                                            }
+                                        }
+                                    }
+
+                                    "completed" -> {
+                                        if (isComplete) finalList.add(sig)
+                                    }
+
+                                    "canceled" -> {
+                                        if (isDeclined) finalList.add(sig)
+                                    }
+
+                                }
+
+
+                            }
+
                             recyclerView.visibility = View.VISIBLE
                             binding!!.empty.visibility = View.GONE
-                            requests.addAll(list)
+                            requests.addAll(finalList)
                             requestsAdapter.notifyDataSetChanged()
 
                         }
@@ -154,7 +210,7 @@ class DocumentFragment : Fragment() {
 
             }
 
-        },1, 100, filter)
+        },1, 100, "")
 
         if (requests.isEmpty()) {
             recyclerView.visibility = View.GONE

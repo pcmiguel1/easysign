@@ -147,6 +147,14 @@ class BackOffice(
                     listener?.onResponse(response.body()!!)
 
                 }
+                else {
+                    val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                    if (jsonObj.has("error")) {
+                        val errorObject = jsonObj.getJSONObject("error")
+                        val errorMsg = errorObject.getString("error_msg")
+                        listener?.onResponse(errorMsg)
+                    }
+                }
             }
 
             override fun onFailure(call: Call<ApiInterface.AccountResponse>, t: Throwable) {
