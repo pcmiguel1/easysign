@@ -87,6 +87,12 @@ class HomeFragment : Fragment() {
 
                 val item = requestsAdapter.getItem(position)
 
+                val bundle = Bundle().apply {
+                    putParcelable("item", item)
+                }
+
+                findNavController().navigate(R.id.action_homeFragment2_to_documentDetailsFragment, bundle)
+
             }
 
         })

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -71,6 +72,12 @@ class DocumentFragment : Fragment() {
             override fun onItemClick(position: Int) {
 
                 val item = requestsAdapter.getItem(position)
+
+                val bundle = Bundle().apply {
+                    putParcelable("item", item)
+                }
+
+                findNavController().navigate(R.id.action_documentsFragment2_to_documentDetailsFragment, bundle)
 
             }
 

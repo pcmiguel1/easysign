@@ -28,12 +28,19 @@
         <action
             android:id="@+id/action_homeFragment2_to_createDocumentFragment"
             app:destination="@id/createDocumentFragment" />
+        <action
+            android:id="@+id/action_homeFragment2_to_documentDetailsFragment"
+            app:destination="@id/documentDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/documentsFragment2"
         android:name="com.pcmiguel.easysign.fragments.documents.DocumentsFragment"
         android:label="fragment_documents"
-        tools:layout="@layout/fragment_documents" />
+        tools:layout="@layout/fragment_documents" >
+        <action
+            android:id="@+id/action_documentsFragment2_to_documentDetailsFragment"
+            app:destination="@id/documentDetailsFragment" />
+    </fragment>
     <fragment
         android:id="@+id/addDocumentsFragment"
         android:name="com.pcmiguel.easysign.fragments.adddocuments.AddDocumentsFragment"
@@ -57,4 +64,9 @@
             android:id="@+id/action_createDocumentFragment_to_addDocumentsFragment"
             app:destination="@id/addDocumentsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/documentDetailsFragment"
+        android:name="com.pcmiguel.easysign.fragments.documentdetails.DocumentDetailsFragment"
+        android:label="fragment_document_details"
+        tools:layout="@layout/fragment_document_details" />
 </navigation>

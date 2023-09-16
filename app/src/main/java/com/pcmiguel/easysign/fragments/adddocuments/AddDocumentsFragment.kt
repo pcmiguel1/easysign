@@ -414,7 +414,6 @@ class AddDocumentsFragment : Fragment() {
                 //ccEmails.add(email)
                 signer.addProperty("email_address", email)
                 signer.addProperty("name", name)
-                signer.addProperty("order", 0)
                 signers.add(signer)
 
                 json.add("signers", signers)

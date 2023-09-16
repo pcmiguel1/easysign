@@ -33,80 +33,149 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <ScrollView
             android:layout_below="@id/toolbarLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
 
             <LinearLayout
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginHorizontal="20dp">
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Set signing order"
+                    android:text="Settings"
+                    android:textSize="20sp"
+                    android:textColor="@color/text_color"
                     android:fontFamily="@font/urbanist_bold"
-                    android:textSize="18sp"
-                    android:textColor="@color/text_color"/>
-
-                <Switch
-                    android:id="@+id/vaccinated"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    android:trackTint="@color/switch_track_selector"
-                    android:thumbTint="@color/switch_thumb_selector"/>
-
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recipients"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"/>
-
-            <RelativeLayout
-                android:id="@+id/addRecipient"
-                android:layout_marginHorizontal="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/custom_button_stroke"
-                android:backgroundTint="@color/black">
+                    android:layout_marginHorizontal="20dp" />
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_centerInParent="true"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:src="@drawable/plus"/>
+                    android:layout_marginHorizontal="20dp">
 
                     <TextView
-                        android:layout_marginStart="5dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Set signing order"
+                        android:fontFamily="@font/urbanist_regular"
+                        android:textSize="18sp"
+                        android:textColor="@color/text_color"/>
+
+                    <Switch
+                        android:id="@+id/signingOrderSwitch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Add recipient"
-                        android:fontFamily="@font/urbanist_semibold"
-                        android:textSize="16sp"
-                        android:textColor="@color/text_color" />
+                        android:text=""
+                        android:enabled="false"
+                        android:trackTint="@color/switch_track_selector"
+                        android:thumbTint="@color/switch_thumb_selector"/>
 
                 </LinearLayout>
 
-            </RelativeLayout>
+                <LinearLayout
+                    android:layout_marginBottom="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginHorizontal="20dp">
 
-        </LinearLayout>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Allow decline"
+                        android:fontFamily="@font/urbanist_regular"
+                        android:textSize="18sp"
+                        android:textColor="@color/text_color"/>
+
+                    <Switch
+                        android:id="@+id/allowDeclineSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:trackTint="@color/switch_track_selector"
+                        android:thumbTint="@color/switch_thumb_selector"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_marginTop="20dp"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text="Recipients"
+                        android:textSize="20sp"
+                        android:textColor="@color/text_color"
+                        android:fontFamily="@font/urbanist_bold"
+                        android:layout_marginHorizontal="20dp"
+                        android:layout_marginBottom="20dp"/>
+
+                    <RelativeLayout
+                        android:id="@+id/addRecipient"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_marginEnd="20dp"
+                        android:paddingHorizontal="10dp"
+                        android:background="@drawable/custom_button_stroke"
+                        android:backgroundTint="@color/black">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_centerInParent="true"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/plus"/>
+
+                            <TextView
+                                android:layout_marginStart="5dp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Add recipient"
+                                android:fontFamily="@font/urbanist_semibold"
+                                android:textSize="15sp"
+                                android:textColor="@color/text_color" />
+
+                        </LinearLayout>
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recipients"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"/>
+
+            </LinearLayout>
+
+        </ScrollView>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/nextBtn"

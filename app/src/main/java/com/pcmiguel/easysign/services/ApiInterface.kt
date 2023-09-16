@@ -14,6 +14,18 @@ interface ApiInterface {
     fun createAccount(@Body jsonObject: JsonObject) : Call<AccountResponse>
 
     @Headers("Content-Type: application/json")
+    @GET("signature_request/files_as_data_uri/{signature_request_id}")
+    fun downloadFilesDataUri(
+        @Path("signature_request_id") signature_request_id: String
+    ) : Call<JsonObject>
+
+    @Headers("Content-Type: application/json")
+    @GET("embedded/sign_url/{signature_id}")
+    fun getEmbeddedSignURL(
+        @Path("signature_id") signature_id: String
+    ) : Call<EmbeddedResponse>
+
+    @Headers("Content-Type: application/json")
     @GET("account")
     fun getAccount(
         @Query("email_address") email_address : String
@@ -31,6 +43,26 @@ interface ApiInterface {
         @Query("page_size") page_size : Int,
         @Query("query") query : String,
     ) : Call<SignatureRequests>
+
+
+
+
+    class Embedded {
+
+        @SerializedName("sign_url")
+        var signUrl: String? = null
+
+        @SerializedName("expires_at")
+        var expiresAt: String? = null
+
+    }
+
+    class EmbeddedResponse {
+
+        @SerializedName("embedded")
+        var embedded: Embedded? = null
+
+    }
 
     class AccountResponse {
 
@@ -82,10 +114,10 @@ interface ApiInterface {
 
     }
 
-    class SignatureRequest {
+    class SignatureRequest() : Parcelable {
 
         @SerializedName("signature_request_id")
-        var signatureRequestd: String? = null
+        var signatureRequestId: String? = null
 
         @SerializedName("title")
         var title: String? = null
@@ -128,6 +160,54 @@ interface ApiInterface {
 
         @SerializedName("cc_email_addresses")
         var ccEmailAddresses: List<String>? = null
+
+        constructor(parcel: Parcel) : this() {
+            signatureRequestId = parcel.readString()
+            title = parcel.readString()
+            originalTitle = parcel.readString()
+            subject = parcel.readString()
+            message = parcel.readString()
+            createdAt = parcel.readValue(Long::class.java.classLoader) as? Long
+            isComplete = parcel.readByte() != 0.toByte()
+            isDeclined = parcel.readByte() != 0.toByte()
+            hasError = parcel.readByte() != 0.toByte()
+            signingUrl = parcel.readString()
+            signingRedirectUrl = parcel.readString()
+            detailsUrl = parcel.readString()
+            requesterEmailAddress = parcel.readString()
+            ccEmailAddresses = parcel.createStringArrayList()
+        }
+
+        override fun writeToParcel(parcel: Parcel, flags: Int) {
+            parcel.writeString(signatureRequestId)
+            parcel.writeString(title)
+            parcel.writeString(originalTitle)
+            parcel.writeString(subject)
+            parcel.writeString(message)
+            parcel.writeValue(createdAt)
+            parcel.writeByte(if (isComplete) 1 else 0)
+            parcel.writeByte(if (isDeclined) 1 else 0)
+            parcel.writeByte(if (hasError) 1 else 0)
+            parcel.writeString(signingUrl)
+            parcel.writeString(signingRedirectUrl)
+            parcel.writeString(detailsUrl)
+            parcel.writeString(requesterEmailAddress)
+            parcel.writeStringList(ccEmailAddresses)
+        }
+
+        override fun describeContents(): Int {
+            return 0
+        }
+
+        companion object CREATOR : Parcelable.Creator<SignatureRequest> {
+            override fun createFromParcel(parcel: Parcel): SignatureRequest {
+                return SignatureRequest(parcel)
+            }
+
+            override fun newArray(size: Int): Array<SignatureRequest?> {
+                return arrayOfNulls(size)
+            }
+        }
 
     }
 

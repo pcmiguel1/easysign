@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.RadioButton
+import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
@@ -52,6 +53,9 @@ class AddRecipientFragment : Fragment() {
 
     private lateinit var loadingDialog: LoadingDialog
 
+    private lateinit var signingOrderSwitch: Switch
+    private lateinit var allowDeclineSwitch: Switch
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -80,6 +84,8 @@ class AddRecipientFragment : Fragment() {
 
         Utils.navigationBar(view, "Add Recipients", requireActivity())
 
+        signingOrderSwitch = binding!!.signingOrderSwitch
+        allowDeclineSwitch = binding!!.allowDeclineSwitch
         recyclerViewRecipients = binding!!.recipients
         recyclerViewRecipients.setHasFixedSize(true)
         recyclerViewRecipients.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
@@ -223,6 +229,7 @@ class AddRecipientFragment : Fragment() {
 
                     recipients.removeAt(position)
                     recipientsAdapter.notifyItemRemoved(position)
+                    updateSwitchState()
 
                 }
 
@@ -300,6 +307,7 @@ class AddRecipientFragment : Fragment() {
 
                         recipients.add(Recipient(name.text.toString(), email.text.toString(), role, me))
                         recipientsAdapter.notifyDataSetChanged()
+                        updateSwitchState()
 
                     }
                     else {
@@ -336,6 +344,13 @@ class AddRecipientFragment : Fragment() {
 
         }
 
+        updateSwitchState()
+
+    }
+
+    private fun updateSwitchState() {
+        if (recipients.size <= 1) signingOrderSwitch.isChecked = false
+        signingOrderSwitch.isEnabled = recipients.size > 1
     }
 
     private fun uploadDocumentsToDropbox(documentFiles: List<File>, recipients : MutableList<Recipient>) {
@@ -387,7 +402,7 @@ class AddRecipientFragment : Fragment() {
                     //ccEmails.add(recipient.email)
                     signer.addProperty("email_address", recipient.email)
                     signer.addProperty("name", recipient.name)
-                    signer.addProperty("order", count)
+                    if (signingOrderSwitch.isChecked) signer.addProperty("order", count)
                     signers.add(signer)
 
                 }
@@ -412,6 +427,7 @@ class AddRecipientFragment : Fragment() {
                 json.add("signing_options", options)
 
                 json.addProperty("test_mode", true)
+                json.addProperty("allow_decline", allowDeclineSwitch.isChecked)
 
 
                 App.instance.backOffice.createEmbeddedSignatureRequest(object : Listener<Any> {
