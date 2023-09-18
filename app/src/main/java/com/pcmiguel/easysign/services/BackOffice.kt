@@ -112,12 +112,10 @@ class BackOffice(
             override fun onResponse(call: Call<ApiInterface.CreateEmbeddedSignatureRequest>, response: Response<ApiInterface.CreateEmbeddedSignatureRequest>) {
 
                 if (response.isSuccessful) {
-                    Log.d("reslglgl1", response.toString())
                     listener?.onResponse(response.body()!!)
                 }
                 else {
                     val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
-                    Log.d("reslglgl2", jsonObj.toString())
                     if (jsonObj.has("error")) {
                         val errorObject = jsonObj.getJSONObject("error")
                         val errorMsg = errorObject.getString("error_msg")

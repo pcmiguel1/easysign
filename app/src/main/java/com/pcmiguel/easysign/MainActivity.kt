@@ -790,7 +790,7 @@ class MainActivity : AppCompatActivity() {
                     val cursor = contentResolver.query(uri, null, null, null, null)
 
                     fileUploaded = true
-                    extractedText = extractTextFromPdf(contentResolver, uri)
+                    extractedText = Utils.extractTextFromPdf(contentResolver, uri)
 
                     uploadImg.visibility = View.GONE
 
@@ -862,24 +862,6 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-    }
-
-    fun extractTextFromPdf(contentResolver: ContentResolver, pdfUri: Uri): String {
-        val pdfInputStream = contentResolver.openInputStream(pdfUri)
-        val pdfDocument = PdfDocument(PdfReader(pdfInputStream))
-        val pageCount = pdfDocument.numberOfPages
-        val text = StringBuilder()
-
-        for (pageNum in 1..pageCount) {
-            val page = pdfDocument.getPage(pageNum)
-            val textExtractor = PdfTextExtractor.getTextFromPage(page)
-            text.append(textExtractor)
-        }
-
-        pdfDocument.close()
-        pdfInputStream?.close()
-
-        return text.toString()
     }
 
     private fun checkPermission() : Boolean {

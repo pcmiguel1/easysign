@@ -2,6 +2,7 @@ package com.pcmiguel.easysign
 
 import android.Manifest
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -23,6 +24,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.auth0.jwt.JWT
+import com.itextpdf.kernel.pdf.PdfDocument
+import com.itextpdf.kernel.pdf.PdfReader
+import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -183,6 +187,24 @@ object Utils {
         val contentResolver = context.contentResolver
         val mimeType = contentResolver.getType(uri)
         return mimeType == "application/pdf"
+    }
+
+    fun extractTextFromPdf(contentResolver: ContentResolver, pdfUri: Uri): String {
+        val pdfInputStream = contentResolver.openInputStream(pdfUri)
+        val pdfDocument = PdfDocument(PdfReader(pdfInputStream))
+        val pageCount = pdfDocument.numberOfPages
+        val text = StringBuilder()
+
+        for (pageNum in 1..pageCount) {
+            val page = pdfDocument.getPage(pageNum)
+            val textExtractor = PdfTextExtractor.getTextFromPage(page)
+            text.append(textExtractor)
+        }
+
+        pdfDocument.close()
+        pdfInputStream?.close()
+
+        return text.toString()
     }
 
     fun bitmapToUri(context: Context, bitmap: Bitmap): Uri? {

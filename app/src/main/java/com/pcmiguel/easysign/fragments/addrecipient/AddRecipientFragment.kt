@@ -107,7 +107,6 @@ class AddRecipientFragment : Fragment() {
                 val email = dialog.findViewById<EditText>(R.id.email)
 
                 val needsToSignRadio = dialog.findViewById<RadioButton>(R.id.needToSignRadio)
-                val inPersonSignerRadio = dialog.findViewById<RadioButton>(R.id.inPersonSignerRadio)
                 val receivesCopyRadio = dialog.findViewById<RadioButton>(R.id.receivesCopyRadio)
 
                 val saveBtn = dialog.findViewById<View>(R.id.saveBtn)
@@ -120,10 +119,6 @@ class AddRecipientFragment : Fragment() {
 
                     "Needs to sign" -> {
                         needsToSignRadio!!.isChecked = true
-                    }
-
-                    "In-person signer" -> {
-                        inPersonSignerRadio!!.isChecked = true
                     }
 
                     "Receives a copy" -> {
@@ -141,21 +136,12 @@ class AddRecipientFragment : Fragment() {
 
                 needsToSignRadio!!.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (isChecked) {
-                        inPersonSignerRadio!!.isChecked = false
-                        receivesCopyRadio!!.isChecked = false
-                    }
-                }
-
-                inPersonSignerRadio!!.setOnCheckedChangeListener { buttonView, isChecked ->
-                    if (isChecked) {
-                        needsToSignRadio!!.isChecked = false
                         receivesCopyRadio!!.isChecked = false
                     }
                 }
 
                 receivesCopyRadio!!.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (isChecked) {
-                        inPersonSignerRadio!!.isChecked = false
                         needsToSignRadio!!.isChecked = false
                     }
                 }
@@ -175,7 +161,6 @@ class AddRecipientFragment : Fragment() {
 
                             var role = ""
                             if (needsToSignRadio.isChecked) role = "Needs to sign"
-                            if (inPersonSignerRadio.isChecked) role = "In-person signer"
                             if (receivesCopyRadio.isChecked) role = "Receives a copy"
 
                             var me = false
@@ -250,7 +235,6 @@ class AddRecipientFragment : Fragment() {
             val email = dialog.findViewById<EditText>(R.id.email)
 
             val needsToSignRadio = dialog.findViewById<RadioButton>(R.id.needToSignRadio)
-            val inPersonSignerRadio = dialog.findViewById<RadioButton>(R.id.inPersonSignerRadio)
             val receivesCopyRadio = dialog.findViewById<RadioButton>(R.id.receivesCopyRadio)
 
             val saveBtn = dialog.findViewById<View>(R.id.saveBtn)
@@ -265,21 +249,12 @@ class AddRecipientFragment : Fragment() {
 
             needsToSignRadio!!.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (isChecked) {
-                        inPersonSignerRadio!!.isChecked = false
                         receivesCopyRadio!!.isChecked = false
                     }
             }
 
-            inPersonSignerRadio!!.setOnCheckedChangeListener { buttonView, isChecked ->
-                if (isChecked) {
-                    needsToSignRadio!!.isChecked = false
-                    receivesCopyRadio!!.isChecked = false
-                }
-            }
-
             receivesCopyRadio!!.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (isChecked) {
-                    inPersonSignerRadio!!.isChecked = false
                     needsToSignRadio!!.isChecked = false
                 }
             }
@@ -299,7 +274,6 @@ class AddRecipientFragment : Fragment() {
 
                         var role = ""
                         if (needsToSignRadio.isChecked) role = "Needs to sign"
-                        if (inPersonSignerRadio.isChecked) role = "In-person signer"
                         if (receivesCopyRadio.isChecked) role = "Receives a copy"
 
                         var me = false
@@ -394,16 +368,20 @@ class AddRecipientFragment : Fragment() {
                 json.addProperty("message", "teste")
 
                 val signers = JsonArray()
+                var signerCount = 0
                 val ccEmails = JsonArray()
 
                 for ((count, recipient) in recipients.withIndex()) {
 
                     val signer = JsonObject()
-                    //ccEmails.add(recipient.email)
-                    signer.addProperty("email_address", recipient.email)
-                    signer.addProperty("name", recipient.name)
-                    if (signingOrderSwitch.isChecked) signer.addProperty("order", count)
-                    signers.add(signer)
+                    if (recipient.role == "Receives a copy") ccEmails.add(recipient.email)
+                    else { // se tiver a roler de "Needs to sign"
+                        signer.addProperty("email_address", recipient.email)
+                        signer.addProperty("name", recipient.name)
+                        if (signingOrderSwitch.isChecked) signer.addProperty("order", signerCount)
+                        signers.add(signer)
+                        signerCount++
+                    }
 
                 }
                 json.add("signers", signers)

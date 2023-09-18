@@ -79,45 +79,6 @@
             android:gravity="center_vertical">
 
             <RadioButton
-                android:id="@+id/inPersonSignerRadio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/custom_radio_button_color"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="In-person signer"
-                    android:fontFamily="@font/urbanist_regular"
-                    android:textSize="15sp"
-                    android:textColor="@color/text_color"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="For anyone who is with you"
-                    android:fontFamily="@font/urbanist_regular"
-                    android:textColor="@color/text_color_gray"
-                    android:textSize="15sp"
-                    android:layout_marginTop="5dp"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_marginTop="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <RadioButton
                 android:id="@+id/receivesCopyRadio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
