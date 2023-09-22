@@ -39,6 +39,22 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <EditText
+                android:id="@+id/agreement_name"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="text"
+                android:hint="Agreement Name"
+                android:textColor="@color/text_color"
+                android:backgroundTint="@color/text_color"
+                android:fontFamily="@font/urbanist_regular"
+                android:textSize="16sp"
+                android:imeOptions="actionNext"
+                android:gravity="top|start"/>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/documents"
                 android:layout_width="match_parent"

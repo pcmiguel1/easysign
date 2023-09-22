@@ -119,10 +119,48 @@ class DocumentDetailsFragment : Fragment() {
 
                             val base64Pdf = dataUri.substringAfter(",")
 
+                            Log.d("base64Pdf", base64Pdf.toString())
+
                             val pdfData = Base64.decode(base64Pdf, Base64.DEFAULT)
 
-                            // Create a file to save the PDF in your app's external storage directory
-                            val pdfFile = File(requireContext().getExternalFilesDir(null), "sample.pdf")
+                            // Create a temporary file to save the PDF
+                            val tempFile = File.createTempFile("temp_pdf_", ".pdf", requireContext().cacheDir)
+
+                            // Write the PDF data to the temporary file
+                            val fos = FileOutputStream(tempFile)
+                            fos.write(pdfData)
+                            fos.close()
+
+                            // Create a content URI using FileProvider for the temporary file
+                            val tempPdfUri = FileProvider.getUriForFile(
+                                requireContext(),
+                                "com.pcmiguel.easysign.provider", // Replace with your FileProvider authority
+                                tempFile
+                            )
+
+                            try {
+                                // Open the temporary PDF file with a PDF viewer using an Intent
+                                val pdfIntent = Intent(Intent.ACTION_VIEW)
+                                pdfIntent.setDataAndType(tempPdfUri, "application/pdf")
+                                pdfIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                pdfIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Grant read permission to the viewer app
+                                startActivity(pdfIntent)
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                // Handle the exception as needed
+                            }
+
+                            // Delete the temporary file when you're done with it
+                            //tempFile.delete()
+
+                            /*// Create a file to save the PDF in your app's external storage directory
+                            val pdfFile = File(requireContext().getExternalFilesDir(null), "temp_doc.pdf")
+
+                            // Check if the file already exists
+                            if (pdfFile.exists()) {
+                                // Delete the existing file
+                                pdfFile.delete()
+                            }
 
                             try {
                                 // Save the byte array as a PDF file
@@ -146,7 +184,7 @@ class DocumentDetailsFragment : Fragment() {
 
                             } catch (e: Exception) {
                                 e.printStackTrace()
-                            }
+                            }*/
 
                         }
                     }

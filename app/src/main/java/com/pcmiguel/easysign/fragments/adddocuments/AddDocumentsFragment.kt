@@ -260,7 +260,9 @@ class AddDocumentsFragment : Fragment() {
 
         binding!!.nextBtn.setOnClickListener {
 
-            if (documents.isNotEmpty()) {
+            val agreementName = binding!!.agreementName.text.toString()
+
+            if (documents.isNotEmpty() && agreementName.isNotEmpty()) {
 
                 requireArguments().remove("pdfFile")
 
@@ -273,6 +275,7 @@ class AddDocumentsFragment : Fragment() {
                 else {
 
                     val bundle = Bundle().apply {
+                        putString("agreementName", binding!!.agreementName.text.toString())
                         putSerializable("documents", ArrayList(documents))
                     }
 
@@ -281,7 +284,12 @@ class AddDocumentsFragment : Fragment() {
                 }
 
             } else {
-                Toast.makeText(requireContext(), "Please select at least one document.", Toast.LENGTH_SHORT).show()
+
+                var erro = ""
+                if (agreementName.isEmpty()) erro = "Give the agreement a name!"
+                else if (documents.isEmpty()) erro = "Please select at least one document."
+
+                Toast.makeText(requireContext(), erro, Toast.LENGTH_SHORT).show()
             }
 
         }
@@ -400,9 +408,9 @@ class AddDocumentsFragment : Fragment() {
                 val json = JsonObject()
 
                 json.addProperty("client_id", BuildConfig.CLIENT_ID)
-                json.addProperty("title", "teste")
-                json.addProperty("subject", "teste")
-                json.addProperty("message", "teste")
+                json.addProperty("title", binding!!.agreementName.text.toString())
+                json.addProperty("subject", binding!!.agreementName.text.toString())
+                json.addProperty("message", binding!!.agreementName.text.toString())
 
                 val signers = JsonArray()
                 val ccEmails = JsonArray()

@@ -56,6 +56,8 @@ class AddRecipientFragment : Fragment() {
     private lateinit var signingOrderSwitch: Switch
     private lateinit var allowDeclineSwitch: Switch
 
+    private var agreementName = ""
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -65,6 +67,12 @@ class AddRecipientFragment : Fragment() {
 
         App.instance.mainActivity!!.findViewById<View>(R.id.bottombar).visibility = View.GONE
         App.instance.mainActivity!!.findViewById<View>(R.id.plus_btn).visibility = View.GONE
+
+        if (arguments != null && requireArguments().containsKey("agreementName")) {
+
+            agreementName = arguments?.getString("agreementName") ?: ""
+
+        }
 
         if (arguments != null && requireArguments().containsKey("documents")) {
 
@@ -363,9 +371,9 @@ class AddRecipientFragment : Fragment() {
                 val json = JsonObject()
 
                 json.addProperty("client_id", BuildConfig.CLIENT_ID)
-                json.addProperty("title", "teste")
-                json.addProperty("subject", "teste")
-                json.addProperty("message", "teste")
+                json.addProperty("title", agreementName)
+                json.addProperty("subject", agreementName)
+                json.addProperty("message", agreementName)
 
                 val signers = JsonArray()
                 var signerCount = 0
