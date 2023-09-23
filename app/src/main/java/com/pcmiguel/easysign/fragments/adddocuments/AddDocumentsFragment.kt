@@ -63,6 +63,7 @@ class AddDocumentsFragment : Fragment() {
     private lateinit var documentsAdapter: DocumentsAdapter
 
     private var noRecipients = false
+    private var createTemplate = false
 
     private lateinit var loadingDialog: LoadingDialog
 
@@ -100,6 +101,12 @@ class AddDocumentsFragment : Fragment() {
 
         }
 
+        if (arguments != null && requireArguments().containsKey("createTemplate")) {
+
+            createTemplate = arguments?.getBoolean("createTemplate")?: false
+
+        }
+
         return fragmentBinding.root
     }
 
@@ -112,6 +119,8 @@ class AddDocumentsFragment : Fragment() {
 
         if (noRecipients) binding!!.nextBtn.text = "Send"
         else binding!!.nextBtn.text = "Next"
+
+        if (createTemplate) binding!!.agreementName.hint = "Template Name"
 
         recyclerViewDocuments = binding!!.documents
         recyclerViewDocuments.setHasFixedSize(true)
@@ -143,6 +152,7 @@ class AddDocumentsFragment : Fragment() {
 
                 val renameBtn = dialog.findViewById<View>(R.id.renameBtn)
                 val deleteBtn = dialog.findViewById<View>(R.id.deleteBtn)
+
 
                 renameBtn!!.setOnClickListener {
 
@@ -266,27 +276,41 @@ class AddDocumentsFragment : Fragment() {
 
                 requireArguments().remove("pdfFile")
 
-                if (noRecipients) {
+                if (createTemplate) {
 
-                    loadingDialog.startLoading()
-                    uploadDocumentsToDropbox(documents)
+                    val bundle = Bundle().apply {
+                        putString("templateName", binding!!.agreementName.text.toString())
+                        putSerializable("documents", ArrayList(documents))
+                    }
+
+                    findNavController().navigate(R.id.action_addDocumentsFragment_to_addSignerRolesFragment, bundle)
 
                 }
                 else {
 
-                    val bundle = Bundle().apply {
-                        putString("agreementName", binding!!.agreementName.text.toString())
-                        putSerializable("documents", ArrayList(documents))
-                    }
+                    if (noRecipients) {
 
-                    findNavController().navigate(R.id.action_addDocumentsFragment_to_addRecipientFragment, bundle)
+                        loadingDialog.startLoading()
+                        uploadDocumentsToDropbox(documents)
+
+                    }
+                    else {
+
+                        val bundle = Bundle().apply {
+                            putString("agreementName", binding!!.agreementName.text.toString())
+                            putSerializable("documents", ArrayList(documents))
+                        }
+
+                        findNavController().navigate(R.id.action_addDocumentsFragment_to_addRecipientFragment, bundle)
+
+                    }
 
                 }
 
             } else {
 
                 var erro = ""
-                if (agreementName.isEmpty()) erro = "Give the agreement a name!"
+                if (agreementName.isEmpty()) if (createTemplate) erro = "Give the template a name!" else erro = "Give the agreement a name!"
                 else if (documents.isEmpty()) erro = "Please select at least one document."
 
                 Toast.makeText(requireContext(), erro, Toast.LENGTH_SHORT).show()

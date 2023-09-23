@@ -31,6 +31,9 @@
         <action
             android:id="@+id/action_homeFragment2_to_documentDetailsFragment"
             app:destination="@id/documentDetailsFragment" />
+        <action
+            android:id="@+id/action_homeFragment2_to_templatesFragment"
+            app:destination="@id/templatesFragment" />
     </fragment>
     <fragment
         android:id="@+id/documentsFragment2"
@@ -49,6 +52,9 @@
         <action
             android:id="@+id/action_addDocumentsFragment_to_addRecipientFragment"
             app:destination="@id/addRecipientFragment" />
+        <action
+            android:id="@+id/action_addDocumentsFragment_to_addSignerRolesFragment"
+            app:destination="@id/addSignerRolesFragment" />
     </fragment>
     <fragment
         android:id="@+id/addRecipientFragment"
@@ -69,4 +75,31 @@
         android:name="com.pcmiguel.easysign.fragments.documentdetails.DocumentDetailsFragment"
         android:label="fragment_document_details"
         tools:layout="@layout/fragment_document_details" />
+    <fragment
+        android:id="@+id/templatesFragment"
+        android:name="com.pcmiguel.easysign.fragments.templates.TemplatesFragment"
+        android:label="fragment_templates"
+        tools:layout="@layout/fragment_templates" >
+        <action
+            android:id="@+id/action_templatesFragment_to_addDocumentsFragment"
+            app:destination="@id/addDocumentsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addSignerRolesFragment"
+        android:name="com.pcmiguel.easysign.fragments.templates.AddSignerRolesFragment"
+        android:label="fragment_add_signer_roles"
+        tools:layout="@layout/fragment_add_signer_roles" >
+        <action
+            android:id="@+id/action_addSignerRolesFragment_to_editDocumentFragment"
+            app:destination="@id/editDocumentFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editDocumentFragment"
+        android:name="com.pcmiguel.easysign.fragments.templates.EditDocumentFragment"
+        android:label="fragment_edit_document"
+        tools:layout="@layout/fragment_edit_document" >
+        <action
+            android:id="@+id/action_editDocumentFragment_to_templatesFragment"
+            app:destination="@id/templatesFragment" />
+    </fragment>
 </navigation>

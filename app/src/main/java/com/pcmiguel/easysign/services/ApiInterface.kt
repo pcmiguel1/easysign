@@ -45,6 +45,24 @@ interface ApiInterface {
     ) : Call<SignatureRequests>
 
 
+    @Headers("Content-Type: application/json")
+    @GET("template/list")
+    fun listTemplates(
+        @Query("account_id") account_id : String,
+        @Query("page") page : Int,
+        @Query("page_size") page_size : Int,
+        @Query("query") query : String,
+    ) : Call<TemplateRequests>
+
+    @Headers("Content-Type: application/json")
+    @POST("template/delete/{template_id}")
+    fun deleteTemplate(
+        @Path("template_id") template_id: String
+    ) : Call<Void>
+
+    @Headers("Content-Type: application/json")
+    @POST("template/create_embedded_draft")
+    fun createEmbeddedTemplateDraft(@Body jsonObject: JsonObject) : Call<CreateEmbeddedDraftRequest>
 
 
     class Embedded {
@@ -54,6 +72,26 @@ interface ApiInterface {
 
         @SerializedName("expires_at")
         var expiresAt: String? = null
+
+    }
+
+    class CreateEmbeddedDraftRequest {
+
+        @SerializedName("template")
+        var template: TemplateRequest? = null
+
+    }
+
+    class TemplateRequest {
+
+        @SerializedName("template_id")
+        var templateId: String? = null
+
+        @SerializedName("edit_url")
+        var editUrl: String? = null
+
+        @SerializedName("expires_at")
+        var expiresAt: Long? = null
 
     }
 
@@ -88,6 +126,16 @@ interface ApiInterface {
 
     }
 
+    class TemplateRequests {
+
+        @SerializedName("list_info")
+        var listInfo: ListInfo? = null
+
+        @SerializedName("templates")
+        var templates: List<Templates>? = null
+
+    }
+
     class SignatureRequests {
 
         @SerializedName("list_info")
@@ -111,6 +159,34 @@ interface ApiInterface {
 
         @SerializedName("page_size")
         var pageSize: Int = 0
+
+    }
+
+    class Templates() {
+
+        @SerializedName("template_id")
+        var templateId: String? = null
+
+        @SerializedName("reusable_form_id")
+        var reusableFormId: String? = null
+
+        @SerializedName("title")
+        var title: String? = null
+
+        @SerializedName("message")
+        var message: String? = null
+
+        @SerializedName("updated_at")
+        var updatedAt: Long? = null
+
+        @SerializedName("is_creator")
+        var isCreator: Boolean = false
+
+        @SerializedName("is_embedded")
+        var isEmbedded: Boolean = false
+
+        @SerializedName("can_edit")
+        var canEdit: Boolean = false
 
     }
 

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.media.ExifInterface
 import android.net.ConnectivityManager
@@ -27,6 +28,7 @@ import com.auth0.jwt.JWT
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -236,6 +238,13 @@ object Utils {
         intent.setDataAndType(pdfUri, "application/pdf")
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         context.startActivity(intent)
+    }
+
+    fun getByteFromDrawable(context: Context, resDrawable: Int) : ByteArray {
+        val bitmap = BitmapFactory.decodeResource(context.resources, resDrawable)
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        return stream.toByteArray()
     }
 
     fun formatFileSize(sizeInBytes: Long): String {

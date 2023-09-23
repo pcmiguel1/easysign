@@ -103,6 +103,30 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/templatesBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/template"
+            app:tint="@color/gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Templates"
+            android:fontFamily="@font/urbanist_semibold"
+            android:textSize="15sp"
+            android:textColor="@color/text_color"
+            android:layout_marginStart="15dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

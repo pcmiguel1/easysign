@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".fragments.templates.TemplatesFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/toolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/primaryColor"
+            android:padding="20dp">
+
+            <include
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:id="@+id/toolbar"
+                layout="@layout/toolbar"
+                android:layout_height="wrap_content" />
+
+            <RelativeLayout
+                android:id="@+id/addTemplate"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:background="@drawable/custom_button"
+                android:backgroundTint="@color/black"
+                android:paddingHorizontal="20dp"
+                android:layout_marginStart="10dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_centerInParent="true"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:src="@drawable/plus"
+                        app:tint="@color/white" />
+
+                    <TextView
+                        android:layout_marginStart="5dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Template"
+                        android:fontFamily="@font/urbanist_semibold"
+                        android:textSize="13sp"
+                        android:textColor="@color/white" />
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/templatesList"
+            android:layout_below="@id/toolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <LinearLayout
+            android:id="@+id/empty"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:layout_centerInParent="true">
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/docs"
+                android:adjustViewBounds="true"/>
+
+            <TextView
+                android:layout_marginTop="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/urbanist_bold"
+                android:textColor="@color/text_color_gray"
+                android:textSize="20sp"
+                android:text="No Templates found!"
+                android:textAlignment="center"
+                android:paddingHorizontal="20dp"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

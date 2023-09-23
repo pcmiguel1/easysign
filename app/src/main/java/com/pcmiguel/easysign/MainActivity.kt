@@ -175,6 +175,7 @@ class MainActivity : AppCompatActivity() {
                     val emailText = dialog.findViewById<TextView>(R.id.email)
                     val profilePic = dialog.findViewById<ImageView>(R.id.image)
 
+                    val templatesBtn = dialog.findViewById<View>(R.id.templatesBtn)
                     val logoutBtn = dialog.findViewById<View>(R.id.logoutBtn)
 
                     nameText!!.text = App.instance.preferences.getString("Name", "")
@@ -198,6 +199,14 @@ class MainActivity : AppCompatActivity() {
                                 }
 
                             })
+
+                    }
+
+                    templatesBtn!!.setOnClickListener {
+
+                        dialog.dismiss()
+
+                        navController.navigate(R.id.action_homeFragment2_to_templatesFragment)
 
                     }
 

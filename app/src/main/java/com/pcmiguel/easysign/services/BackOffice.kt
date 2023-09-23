@@ -133,6 +133,56 @@ class BackOffice(
 
     }
 
+    fun createEmbeddedTemplateDraft(listener: Listener<Any>?, json: JsonObject) {
+
+        apiInterface.createEmbeddedTemplateDraft(json).enqueue(object : retrofit2.Callback<ApiInterface.CreateEmbeddedDraftRequest> {
+            override fun onResponse(call: Call<ApiInterface.CreateEmbeddedDraftRequest>, response: Response<ApiInterface.CreateEmbeddedDraftRequest>) {
+
+                if (response.isSuccessful) {
+                    listener?.onResponse(response.body()!!)
+                }
+                else {
+                    val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                    if (jsonObj.has("error")) {
+                        val errorObject = jsonObj.getJSONObject("error")
+                        val errorMsg = errorObject.getString("error_msg")
+                        listener?.onResponse(errorMsg)
+                    }
+                }
+
+            }
+
+            override fun onFailure(call: Call<ApiInterface.CreateEmbeddedDraftRequest>, t: Throwable) {
+                clientError(t, null)
+            }
+
+        })
+
+    }
+
+    fun deleteTemplate(listener : Listener<Any>?, templateId : String) {
+
+        apiInterface.deleteTemplate(templateId).enqueue(object : Callback<Void>() {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+
+                if (response.isSuccessful)  {
+                    listener?.onResponse(null)
+                }
+                else {
+                    val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                    if (jsonObj.has("error")) {
+                        val errorObject = jsonObj.getJSONObject("error")
+                        val errorMsg = errorObject.getString("error_msg")
+                        listener?.onResponse(errorMsg)
+                    }
+                }
+
+            }
+
+        })
+
+    }
+
     fun downloadFilesDataUri(listener: Listener<Any>?, signatureRequestId : String) {
 
         apiInterface.downloadFilesDataUri(signatureRequestId).enqueue(object : Callback<JsonObject>() {
@@ -277,6 +327,38 @@ class BackOffice(
             }
 
             override fun onFailure(call: Call<ApiInterface.SignatureRequests>, t: Throwable) {
+                clientError(t, null)
+            }
+
+        })
+
+    }
+
+    fun listTemplates(listener: Listener<Any>?, page: Int, pageSize: Int, query: String) {
+
+        apiInterface.listTemplates(
+            App.instance.preferences.getString("AccountId", "")!!,
+            page,
+            pageSize,
+            query
+        ).enqueue(object : retrofit2.Callback<ApiInterface.TemplateRequests> {
+            override fun onResponse(
+                call: Call<ApiInterface.TemplateRequests>,
+                response: Response<ApiInterface.TemplateRequests>
+            ) {
+
+                if (response.isSuccessful) {
+
+                    listener?.onResponse(response.body())
+
+                }
+                else {
+                    serverError(call, response, listener)
+                }
+
+            }
+
+            override fun onFailure(call: Call<ApiInterface.TemplateRequests>, t: Throwable) {
                 clientError(t, null)
             }
 
