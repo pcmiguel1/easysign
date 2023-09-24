@@ -120,7 +120,7 @@ class AddDocumentsFragment : Fragment() {
         if (noRecipients) binding!!.nextBtn.text = "Send"
         else binding!!.nextBtn.text = "Next"
 
-        if (createTemplate) binding!!.agreementName.hint = "Template Name"
+        if (createTemplate) binding!!.agreementName.visibility = View.GONE
 
         recyclerViewDocuments = binding!!.documents
         recyclerViewDocuments.setHasFixedSize(true)
@@ -272,14 +272,14 @@ class AddDocumentsFragment : Fragment() {
 
             val agreementName = binding!!.agreementName.text.toString()
 
-            if (documents.isNotEmpty() && agreementName.isNotEmpty()) {
+            if (createTemplate) {
 
-                requireArguments().remove("pdfFile")
+                if (documents.isNotEmpty()) {
 
-                if (createTemplate) {
+                    requireArguments().remove("pdfFile")
 
                     val bundle = Bundle().apply {
-                        putString("templateName", binding!!.agreementName.text.toString())
+                        //putString("templateName", binding!!.agreementName.text.toString())
                         putSerializable("documents", ArrayList(documents))
                     }
 
@@ -287,6 +287,14 @@ class AddDocumentsFragment : Fragment() {
 
                 }
                 else {
+                    Toast.makeText(requireContext(), "Please select at least one document.", Toast.LENGTH_SHORT).show()
+                }
+
+            } else {
+
+                if (documents.isNotEmpty() && agreementName.isNotEmpty()) {
+
+                    requireArguments().remove("pdfFile")
 
                     if (noRecipients) {
 
@@ -306,14 +314,15 @@ class AddDocumentsFragment : Fragment() {
                     }
 
                 }
+                else {
 
-            } else {
+                    var erro = ""
+                    if (agreementName.isEmpty()) erro = "Give the agreement a name!"
+                    else if (documents.isEmpty()) erro = "Please select at least one document."
 
-                var erro = ""
-                if (agreementName.isEmpty()) if (createTemplate) erro = "Give the template a name!" else erro = "Give the agreement a name!"
-                else if (documents.isEmpty()) erro = "Please select at least one document."
+                    Toast.makeText(requireContext(), erro, Toast.LENGTH_SHORT).show()
+                }
 
-                Toast.makeText(requireContext(), erro, Toast.LENGTH_SHORT).show()
             }
 
         }

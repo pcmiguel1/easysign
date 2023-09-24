@@ -213,9 +213,67 @@ class BackOffice(
 
     }
 
+    fun getTemplateFilesDataUri(listener: Listener<Any>?, templateId : String) {
+
+        apiInterface.getTemplateFilesDataUri(templateId).enqueue(object : Callback<JsonObject>() {
+            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+
+                if (response.isSuccessful) {
+
+                    try {
+
+                        listener?.onResponse(response.body()!!.asJsonObject)
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+                } else {
+                    val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                    if (jsonObj.has("error")) {
+                        val errorObject = jsonObj.getJSONObject("error")
+                        val errorMsg = errorObject.getString("error_msg")
+                        listener?.onResponse(errorMsg)
+                    }
+                }
+
+            }
+
+        })
+
+    }
+
     fun getEmbeddedSignURL(listener : Listener<Any>?, signatureId: String) {
 
         apiInterface.getEmbeddedSignURL(signatureId).enqueue(object : retrofit2.Callback<ApiInterface.EmbeddedResponse> {
+            override fun onResponse(
+                call: Call<ApiInterface.EmbeddedResponse>,
+                response: Response<ApiInterface.EmbeddedResponse>
+            ) {
+
+                if (response.isSuccessful) {
+                    listener?.onResponse(response.body()!!)
+                }
+                else {
+                    val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                    if (jsonObj.has("error")) {
+                        val errorObject = jsonObj.getJSONObject("error")
+                        val errorMsg = errorObject.getString("error_msg")
+                        listener?.onResponse(errorMsg)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<ApiInterface.EmbeddedResponse>, t: Throwable) {
+                clientError(t, null)
+            }
+        })
+
+    }
+
+    fun getEmbeddedTemplateEditUrl(listener : Listener<Any>?, json: JsonObject, templateId: String) {
+
+        apiInterface.getEmbeddedTemplateEditUrl(json, templateId).enqueue(object : retrofit2.Callback<ApiInterface.EmbeddedResponse> {
             override fun onResponse(
                 call: Call<ApiInterface.EmbeddedResponse>,
                 response: Response<ApiInterface.EmbeddedResponse>

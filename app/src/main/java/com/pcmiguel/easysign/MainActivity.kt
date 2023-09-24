@@ -206,7 +206,7 @@ class MainActivity : AppCompatActivity() {
 
                         dialog.dismiss()
 
-                        navController.navigate(R.id.action_homeFragment2_to_templatesFragment)
+                        navController.navigate(R.id.templatesFragment)
 
                     }
 

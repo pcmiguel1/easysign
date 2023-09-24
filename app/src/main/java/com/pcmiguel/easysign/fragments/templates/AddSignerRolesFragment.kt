@@ -53,8 +53,6 @@ class AddSignerRolesFragment : Fragment() {
 
     private lateinit var loadingDialog: LoadingDialog
 
-    private var templateName = ""
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -66,11 +64,11 @@ class AddSignerRolesFragment : Fragment() {
         App.instance.mainActivity!!.findViewById<View>(R.id.bottombar).visibility = View.GONE
         App.instance.mainActivity!!.findViewById<View>(R.id.plus_btn).visibility = View.GONE
 
-        if (arguments != null && requireArguments().containsKey("templateName")) {
+        /*if (arguments != null && requireArguments().containsKey("templateName")) {
 
             templateName = arguments?.getString("templateName") ?: ""
 
-        }
+        }*/
 
         if (arguments != null && requireArguments().containsKey("documents")) {
 
@@ -274,7 +272,7 @@ class AddSignerRolesFragment : Fragment() {
                 val json = JsonObject()
 
                 json.addProperty("client_id", BuildConfig.CLIENT_ID)
-                json.addProperty("title", templateName)
+                json.addProperty("title", "")
                 json.addProperty("subject", "")
                 json.addProperty("message", "")
 

@@ -20,6 +20,12 @@ interface ApiInterface {
     ) : Call<JsonObject>
 
     @Headers("Content-Type: application/json")
+    @GET("template/files_as_data_uri/{template_id}")
+    fun getTemplateFilesDataUri(
+        @Path("template_id") template_id: String
+    ) : Call<JsonObject>
+
+    @Headers("Content-Type: application/json")
     @GET("embedded/sign_url/{signature_id}")
     fun getEmbeddedSignURL(
         @Path("signature_id") signature_id: String
@@ -64,8 +70,17 @@ interface ApiInterface {
     @POST("template/create_embedded_draft")
     fun createEmbeddedTemplateDraft(@Body jsonObject: JsonObject) : Call<CreateEmbeddedDraftRequest>
 
+    @Headers("Content-Type: application/json")
+    @POST("embedded/edit_url/{template_id}")
+    fun getEmbeddedTemplateEditUrl(
+        @Body jsonObject: JsonObject,
+        @Path("template_id") template_id: String
+    ) : Call<EmbeddedResponse>
 
     class Embedded {
+
+        @SerializedName("edit_url")
+        var editUrl: String? = null
 
         @SerializedName("sign_url")
         var signUrl: String? = null

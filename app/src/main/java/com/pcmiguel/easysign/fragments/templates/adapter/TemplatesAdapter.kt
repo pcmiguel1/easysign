@@ -14,12 +14,17 @@ class TemplatesAdapter(
 
     private lateinit var mEditListener : onEditClickListener
     private lateinit var mDeleteListener : onDeleteClickListener
+    private lateinit var mPreviewListener : onPreviewClickListener
 
     interface onEditClickListener {
         fun onItemClick(position: Int)
     }
 
     interface onDeleteClickListener {
+        fun onItemClick(position: Int)
+    }
+
+    interface onPreviewClickListener {
         fun onItemClick(position: Int)
     }
 
@@ -31,13 +36,17 @@ class TemplatesAdapter(
         mDeleteListener = listener
     }
 
+    fun onPreviewClickListener(listener: onPreviewClickListener) {
+        mPreviewListener = listener
+    }
 
-    class ItemViewHolder(itemView: View, editListener: onEditClickListener, deleteListener: onDeleteClickListener) : RecyclerView.ViewHolder(itemView) {
+
+    class ItemViewHolder(itemView: View, editListener: onEditClickListener, deleteListener: onDeleteClickListener, previewListener : onPreviewClickListener) : RecyclerView.ViewHolder(itemView) {
 
         val title : TextView = itemView.findViewById(R.id.title)
-        val message : TextView = itemView.findViewById(R.id.message)
         val editBtn : View = itemView.findViewById(R.id.editBtn)
         val deleteBtn : View = itemView.findViewById(R.id.deleteBtn)
+        val previewBtn : View = itemView.findViewById(R.id.previewBtn)
 
         init {
 
@@ -49,13 +58,17 @@ class TemplatesAdapter(
                 deleteListener.onItemClick(absoluteAdapterPosition)
             }
 
+            previewBtn.setOnClickListener {
+                previewListener.onItemClick(absoluteAdapterPosition)
+            }
+
         }
 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_template, parent, false)
-        return ItemViewHolder(view, mEditListener, mDeleteListener)
+        return ItemViewHolder(view, mEditListener, mDeleteListener, mPreviewListener)
     }
 
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
@@ -63,7 +76,6 @@ class TemplatesAdapter(
         val item = list[position]
 
         holder.title.text = item.title ?: ""
-        holder.message.text = item.message ?: ""
 
     }
 

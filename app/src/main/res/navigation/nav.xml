@@ -83,6 +83,9 @@
         <action
             android:id="@+id/action_templatesFragment_to_addDocumentsFragment"
             app:destination="@id/addDocumentsFragment" />
+        <action
+            android:id="@+id/action_templatesFragment_to_editDocumentFragment"
+            app:destination="@id/editDocumentFragment" />
     </fragment>
     <fragment
         android:id="@+id/addSignerRolesFragment"
