@@ -20,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.v2.DbxClientV2
 import com.dropbox.core.v2.files.WriteMode
+import com.dropbox.core.v2.sharing.RequestedVisibility
+import com.dropbox.core.v2.sharing.SharedLinkSettings
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -362,7 +364,11 @@ class AddRecipientFragment : Fragment() {
 
                     // Get the shared link for the uploaded file
                     val sharedLink = client.sharing().createSharedLinkWithSettings(uploadedPath)
-                    val sharedLinkUrl = sharedLink.url
+
+                    // Add the `dl=1` parameter to force download
+                    val sharedLinkUrl = sharedLink.url + "&dl=1"
+
+                    //val sharedLinkUrl = sharedLink.url
 
                     uploadedPaths.add(sharedLinkUrl)
 
