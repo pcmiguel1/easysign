@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    tools:context=".fragments.addrole.AddSignerRoleFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/toolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/primaryColor"
+            android:padding="20dp">
+
+            <include
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:id="@+id/toolbar"
+                layout="@layout/toolbar"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/menu_vertical"
+                android:layout_gravity="center_vertical"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_below="@id/toolbarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Signers"
+                android:textSize="20sp"
+                android:textColor="@color/text_color"
+                android:fontFamily="@font/urbanist_bold"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="20dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/signers"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="20dp"/>
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/nextBtn"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginBottom="15dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="20dp"
+            style="?android:attr/borderlessButtonStyle"
+            android:background="@drawable/custom_button"
+            android:backgroundTint="@color/black"
+            android:fontFamily="@font/urbanist_bold"
+            android:textSize="16sp"
+            android:text="Send"
+            android:textAllCaps="false"
+            android:textColor="@color/white"/>
+
+    </RelativeLayout>
+
+</FrameLayout>

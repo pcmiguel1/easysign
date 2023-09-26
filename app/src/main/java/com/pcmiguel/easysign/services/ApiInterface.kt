@@ -42,6 +42,10 @@ interface ApiInterface {
     fun createEmbeddedSignatureRequest(@Body jsonObject: JsonObject) : Call<CreateEmbeddedSignatureRequest>
 
     @Headers("Content-Type: application/json")
+    @POST("signature_request/create_embedded_with_template")
+    fun createEmbeddedSignatureRequestWithTemplate(@Body jsonObject: JsonObject) : Call<CreateEmbeddedSignatureRequest>
+
+    @Headers("Content-Type: application/json")
     @GET("signature_request/list")
     fun listSignatureRequests(
         @Query("account_id") account_id : String,
@@ -177,7 +181,7 @@ interface ApiInterface {
 
     }
 
-    class Templates() {
+    class Templates() : Parcelable {
 
         @SerializedName("template_id")
         var templateId: String? = null
@@ -202,6 +206,56 @@ interface ApiInterface {
 
         @SerializedName("can_edit")
         var canEdit: Boolean = false
+
+        @SerializedName("signer_roles")
+        var signerRoles: List<SignerRole>? = null
+
+        constructor(parcel: Parcel) : this() {
+            templateId = parcel.readString()
+            reusableFormId = parcel.readString()
+            title = parcel.readString()
+            message = parcel.readString()
+            updatedAt = parcel.readValue(Long::class.java.classLoader) as? Long
+            isCreator = parcel.readByte() != 0.toByte()
+            isEmbedded = parcel.readByte() != 0.toByte()
+            canEdit = parcel.readByte() != 0.toByte()
+        }
+
+        override fun writeToParcel(parcel: Parcel, flags: Int) {
+            parcel.writeString(templateId)
+            parcel.writeString(reusableFormId)
+            parcel.writeString(title)
+            parcel.writeString(message)
+            parcel.writeValue(updatedAt)
+            parcel.writeByte(if (isCreator) 1 else 0)
+            parcel.writeByte(if (isEmbedded) 1 else 0)
+            parcel.writeByte(if (canEdit) 1 else 0)
+        }
+
+        override fun describeContents(): Int {
+            return 0
+        }
+
+        companion object CREATOR : Parcelable.Creator<Templates> {
+            override fun createFromParcel(parcel: Parcel): Templates {
+                return Templates(parcel)
+            }
+
+            override fun newArray(size: Int): Array<Templates?> {
+                return arrayOfNulls(size)
+            }
+        }
+
+    }
+
+    class SignerRole {
+
+        @SerializedName("name")
+        var role: String? = null
+
+        var nameSigner: String? = null
+
+        var emailSigner: String? = null
 
     }
 

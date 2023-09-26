@@ -53,10 +53,12 @@ import com.pawcare.pawcare.services.Listener
 import com.pcmiguel.easysign.Utils.openActivity
 import com.pcmiguel.easysign.fragments.adddocuments.AddDocumentsFragment
 import com.pcmiguel.easysign.fragments.scan.Scanner
+import com.pcmiguel.easysign.libraries.LoadingDialog
 import com.pcmiguel.easysign.libraries.scanner.activity.ScanActivity
 import com.pcmiguel.easysign.libraries.scanner.constants.ScanConstants
 import com.pcmiguel.easysign.libraries.scanner.util.ScanUtils
 import com.pcmiguel.easysign.services.ApiAIInterface
+import com.pcmiguel.easysign.services.ApiInterface
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -77,6 +79,8 @@ class MainActivity : AppCompatActivity() {
     private var extractedText = ""
 
     private var noRecipients = false
+
+    private lateinit var loadingDialog: LoadingDialog
 
     private val fromBottomFabAnim : Animation by lazy {
         AnimationUtils.loadAnimation(this, R.anim.from_bottom_fab)
@@ -121,6 +125,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         App.instance.mainActivity = this
+
+        loadingDialog = LoadingDialog(this)
 
         World.init(applicationContext)
 
@@ -347,7 +353,43 @@ class MainActivity : AppCompatActivity() {
         val photoButton = mDialogView.findViewById<View>(R.id.photoBtn)
         val browseButton = mDialogView.findViewById<View>(R.id.browseBtn)
 
-        templateButton.setOnClickListener {  }
+        templateButton.setOnClickListener {
+
+            dialog.dismiss()
+
+            //Check if you have created templates
+            loadingDialog.startLoading()
+
+            App.instance.backOffice.listTemplates(object : Listener<Any> {
+                override fun onResponse(response: Any?) {
+
+                    loadingDialog.isDismiss()
+
+                    if (response != null && response is ApiInterface.TemplateRequests) {
+
+                        val list = response.templates
+
+                        if (list!!.isNotEmpty()) {
+
+                            val bundle = Bundle().apply {
+                                putBoolean("selectTemplate", true)
+                            }
+                            navController.navigate(R.id.templatesFragment, bundle)
+
+                        }
+                        else {
+                            noTemplatesDialog()
+                        }
+
+                    }
+                    else {
+                        noTemplatesDialog()
+                    }
+
+                }
+            }, 1, 100, "")
+
+        }
 
         scanButton.setOnClickListener {
 
@@ -381,6 +423,30 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
         shrinkFab()
 
+
+    }
+
+    private fun noTemplatesDialog() {
+
+        val mDialogView = LayoutInflater.from(this).inflate(R.layout.popup_no_templates, null)
+
+        val builder = AlertDialog.Builder(this)
+            .setView(mDialogView)
+            .setCancelable(true)
+
+        val dialog = builder.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val addTemplate = mDialogView.findViewById<View>(R.id.addTemplate)
+
+        addTemplate.setOnClickListener {
+
+            dialog.dismiss()
+            navController.navigate(R.id.templatesFragment)
+
+        }
+
+        dialog.show()
 
     }
 

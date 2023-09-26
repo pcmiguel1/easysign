@@ -133,6 +133,33 @@ class BackOffice(
 
     }
 
+    fun createEmbeddedSignatureRequestWithTemplate(listener: Listener<Any>?, json: JsonObject) {
+
+        apiInterface.createEmbeddedSignatureRequestWithTemplate(json).enqueue(object : retrofit2.Callback<ApiInterface.CreateEmbeddedSignatureRequest> {
+            override fun onResponse(call: Call<ApiInterface.CreateEmbeddedSignatureRequest>, response: Response<ApiInterface.CreateEmbeddedSignatureRequest>) {
+
+                if (response.isSuccessful) {
+                    listener?.onResponse(response.body()!!)
+                }
+                else {
+                    val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                    if (jsonObj.has("error")) {
+                        val errorObject = jsonObj.getJSONObject("error")
+                        val errorMsg = errorObject.getString("error_msg")
+                        listener?.onResponse(errorMsg)
+                    }
+                }
+
+            }
+
+            override fun onFailure(call: Call<ApiInterface.CreateEmbeddedSignatureRequest>, t: Throwable) {
+                clientError(t, null)
+            }
+
+        })
+
+    }
+
     fun createEmbeddedTemplateDraft(listener: Listener<Any>?, json: JsonObject) {
 
         apiInterface.createEmbeddedTemplateDraft(json).enqueue(object : retrofit2.Callback<ApiInterface.CreateEmbeddedDraftRequest> {

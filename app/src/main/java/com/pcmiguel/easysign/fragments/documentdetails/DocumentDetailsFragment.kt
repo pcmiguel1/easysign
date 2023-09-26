@@ -85,6 +85,7 @@ class DocumentDetailsFragment : Fragment() {
         val from = binding!!.from
         val sent = binding!!.sent
 
+        fileName.text = item.title ?: ""
         from.text = item.requesterEmailAddress ?: ""
         sent.text = Utils.formatDate(item.createdAt!!)
 

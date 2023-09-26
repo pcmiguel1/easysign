@@ -86,6 +86,9 @@
         <action
             android:id="@+id/action_templatesFragment_to_editDocumentFragment"
             app:destination="@id/editDocumentFragment" />
+        <action
+            android:id="@+id/action_templatesFragment_to_addSignerRoleFragment"
+            app:destination="@id/addSignerRoleFragment" />
     </fragment>
     <fragment
         android:id="@+id/addSignerRolesFragment"
@@ -105,4 +108,9 @@
             android:id="@+id/action_editDocumentFragment_to_templatesFragment"
             app:destination="@id/templatesFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/addSignerRoleFragment"
+        android:name="com.pcmiguel.easysign.fragments.addrole.AddSignerRoleFragment"
+        android:label="fragment_add_signer_role"
+        tools:layout="@layout/fragment_add_signer_role" />
 </navigation>

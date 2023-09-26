@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/role"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Role"
+        android:fontFamily="@font/urbanist_bold"
+        android:textSize="18sp"
+        android:textColor="@color/text_color"
+        android:layout_marginTop="20dp"/>
+
+    <EditText
+        android:id="@+id/name"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:hint="Signer name"
+        android:textColor="@color/text_color"
+        android:backgroundTint="@color/text_color"
+        android:fontFamily="@font/urbanist_regular"
+        android:textSize="16sp"
+        android:imeOptions="actionNext"
+        android:gravity="top|start"/>
+
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:textColor="@color/text_color"
+        android:backgroundTint="@color/text_color"
+        android:fontFamily="@font/urbanist_regular"
+        android:textSize="16sp"
+        android:hint="Signer email"
+        android:imeOptions="actionDone"
+        android:gravity="top|start"/>
+
+</LinearLayout>

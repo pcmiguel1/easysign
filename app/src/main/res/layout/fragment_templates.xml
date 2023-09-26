@@ -63,11 +63,30 @@
 
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/templatesList"
+        <LinearLayout
             android:layout_below="@id/toolbarLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/selectTemplate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select a template"
+                android:fontFamily="@font/urbanist_regular"
+                android:textColor="@color/text_color_gray"
+                android:textSize="15sp"
+                android:layout_marginVertical="20dp"
+                android:layout_marginHorizontal="20dp"
+                android:visibility="gone"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/templatesList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/empty"
@@ -97,6 +116,23 @@
                 android:paddingHorizontal="20dp"/>
 
         </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/nextBtn"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginBottom="15dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="20dp"
+            style="?android:attr/borderlessButtonStyle"
+            android:background="@drawable/custom_button"
+            android:backgroundTint="@color/black"
+            android:fontFamily="@font/urbanist_bold"
+            android:textSize="16sp"
+            android:text="Next"
+            android:textAllCaps="false"
+            android:textColor="@color/white"/>
 
     </RelativeLayout>
 

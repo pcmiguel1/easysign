@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,6 +40,8 @@ class TemplatesFragment : Fragment() {
 
     private lateinit var loadingDialog: LoadingDialog
 
+    private var selectTemplate = false
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,6 +52,12 @@ class TemplatesFragment : Fragment() {
 
         App.instance.mainActivity!!.findViewById<View>(R.id.bottombar).visibility = View.GONE
         App.instance.mainActivity!!.findViewById<View>(R.id.plus_btn).visibility = View.GONE
+
+        if (arguments != null && requireArguments().containsKey("selectTemplate")) {
+
+            selectTemplate = arguments?.getBoolean("selectTemplate") ?: false
+
+        }
 
         return fragmentBinding.root
 
@@ -61,11 +70,39 @@ class TemplatesFragment : Fragment() {
 
         Utils.navigationBar(view, "Templates", requireActivity())
 
+        if (selectTemplate) {
+
+            binding!!.addTemplate.visibility = View.GONE
+            binding!!.selectTemplate.visibility = View.VISIBLE
+            binding!!.nextBtn.visibility = View.VISIBLE
+
+            binding!!.nextBtn.setOnClickListener {
+
+                val itemSelected = templatesAdapter.getSelectedItem()
+
+                if (itemSelected != null) {
+
+                    val bundle = Bundle().apply {
+                        putParcelable("itemSelected", itemSelected)
+                    }
+
+                    findNavController().navigate(R.id.action_templatesFragment_to_addSignerRoleFragment, bundle)
+
+
+                } else {
+                    Toast.makeText(requireContext(), "Please select one template.", Toast.LENGTH_SHORT).show()
+                }
+
+            }
+
+
+        }
+
         recyclerViewTemplates = binding!!.templatesList
         recyclerViewTemplates.setHasFixedSize(true)
         recyclerViewTemplates.layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
 
-        templatesAdapter = TemplatesAdapter(templates)
+        templatesAdapter = TemplatesAdapter(templates, selectTemplate)
         recyclerViewTemplates.adapter = templatesAdapter
 
         templatesAdapter.onPreviewClickListener(object : TemplatesAdapter.onPreviewClickListener {

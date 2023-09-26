@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginHorizontal="20dp"
     android:orientation="vertical"
-    android:layout_marginVertical="10dp">
+    android:layout_marginVertical="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +17,17 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/check"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/unchecked_checkbox"
+                android:visibility="gone"/>
 
             <TextView
                 android:id="@+id/title"

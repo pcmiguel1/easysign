@@ -51,7 +51,7 @@
                     android:id="@+id/fileName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="sample.pdf"
+                    android:text=""
                     android:fontFamily="@font/urbanist_bold"
                     android:textColor="@color/text_color"
                     android:textSize="18sp"/>
