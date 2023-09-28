@@ -25,9 +25,17 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.auth0.jwt.JWT
+import com.dropbox.core.DbxException
+import com.dropbox.core.DbxRequestConfig
+import com.dropbox.core.android.Auth
+import com.dropbox.core.v2.DbxClientV2
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
+import com.pcmiguel.easysign.Utils.openActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -50,6 +58,37 @@ object Utils {
     fun validCode(code: String): Boolean {
         val codePattern = Pattern.compile("^[0-9]{4}$")
         return code.matches(codePattern.toRegex())
+    }
+
+    fun logout(context: Context) {
+
+        App.instance.preferences.edit().clear().apply()
+
+        val accessToken = Auth.getOAuth2Token()
+
+        if (accessToken != null) {
+
+            GlobalScope.launch(Dispatchers.IO) {
+
+                val client = DbxClientV2(DbxRequestConfig.newBuilder("easysignapp").build(), accessToken)
+
+                try {
+                    // Revoke the access token
+                    client.auth().tokenRevoke()
+
+                    context.openActivity(LoadingActivity::class.java)
+
+                } catch (e: DbxException) {
+                    e.printStackTrace()
+                }
+
+            }
+
+        }
+        else {
+            context.openActivity(LoadingActivity::class.java)
+        }
+
     }
 
     fun isKeyCodeNumber(keycode: Int): Boolean {

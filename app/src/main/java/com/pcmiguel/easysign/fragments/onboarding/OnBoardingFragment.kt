@@ -23,10 +23,7 @@ import com.dropbox.core.android.Auth
 import com.dropbox.core.v2.DbxClientV2
 import com.google.gson.JsonObject
 import com.pawcare.pawcare.services.Listener
-import com.pcmiguel.easysign.App
-import com.pcmiguel.easysign.BuildConfig
-import com.pcmiguel.easysign.LoadingActivity
-import com.pcmiguel.easysign.R
+import com.pcmiguel.easysign.*
 import com.pcmiguel.easysign.Utils.openActivity
 import com.pcmiguel.easysign.databinding.FragmentOnBoardingBinding
 import com.pcmiguel.easysign.libraries.LoadingDialog
@@ -289,6 +286,11 @@ class OnBoardingFragment : Fragment() {
 
             } catch (e: DbxException) {
                 e.printStackTrace()
+                if (e is com.dropbox.core.InvalidAccessTokenException) {
+
+                    Utils.logout(requireContext())
+
+                }
             }
 
         }

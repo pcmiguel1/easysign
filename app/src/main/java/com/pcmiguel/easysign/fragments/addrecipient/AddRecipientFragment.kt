@@ -488,6 +488,11 @@ class AddRecipientFragment : Fragment() {
                 e.printStackTrace()
                 // Handle any exceptions that may occur during the Dropbox upload
                 // You can also update the UI with an error message from the main thread
+                if (e is com.dropbox.core.InvalidAccessTokenException) {
+
+                    Utils.logout(requireContext())
+
+                }
             }
         }
     }

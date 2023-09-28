@@ -23,7 +23,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.dropbox.core.DbxException
 import com.dropbox.core.DbxRequestConfig
+import com.dropbox.core.android.Auth
 import com.dropbox.core.v2.DbxClientV2
 import com.dropbox.core.v2.files.FileMetadata
 import com.dropbox.core.v2.files.WriteMode
@@ -31,7 +33,10 @@ import com.github.gcacace.signaturepad.views.SignaturePad
 import com.google.android.material.card.MaterialCardView
 import com.pawcare.pawcare.services.Listener
 import com.pcmiguel.easysign.App
+import com.pcmiguel.easysign.LoadingActivity
 import com.pcmiguel.easysign.R
+import com.pcmiguel.easysign.Utils
+import com.pcmiguel.easysign.Utils.openActivity
 import com.pcmiguel.easysign.databinding.FragmentHomeBinding
 import com.pcmiguel.easysign.fragments.home.adapter.RequestsAdapter
 import com.pcmiguel.easysign.libraries.LoadingDialog
@@ -395,6 +400,9 @@ class HomeFragment : Fragment() {
                 e.printStackTrace()
                 // Handle any exceptions that may occur during the Dropbox upload
                 // You can also update the UI with an error message from the main thread
+                if (e is com.dropbox.core.InvalidAccessTokenException) {
+                    Utils.logout(requireContext())
+                }
             }
         }
     }
@@ -412,6 +420,11 @@ class HomeFragment : Fragment() {
 
             } catch (e: Exception) {
                 e.printStackTrace()
+                if (e is com.dropbox.core.InvalidAccessTokenException) {
+
+                    Utils.logout(requireContext())
+
+                }
             }
         }
     }
