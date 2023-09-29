@@ -92,7 +92,7 @@ class DocumentDetailsFragment : Fragment() {
 
                                 if (isAdded) {
 
-                                    if (response == null) { // assinatura recusada com sucesso
+                                    if (response == null) {
 
                                         requireActivity().onBackPressed()
 
@@ -133,6 +133,10 @@ class DocumentDetailsFragment : Fragment() {
         fileName.text = item.title ?: ""
         from.text = item.requesterEmailAddress ?: ""
         sent.text = Utils.formatDate(item.createdAt!!)
+
+        if (item.requesterEmailAddress == App.instance.preferences.getString("Email", "")) {
+            binding!!.optionsBtn.visibility = View.VISIBLE
+        }
 
         // bottom menu sign só aparece se user precisar de assinar o documento
         val signatures = item.signatures

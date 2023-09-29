@@ -29,6 +29,7 @@
 
             <ImageView
                 android:id="@+id/optionsBtn"
+                android:visibility="gone"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:src="@drawable/menu_vertical"
