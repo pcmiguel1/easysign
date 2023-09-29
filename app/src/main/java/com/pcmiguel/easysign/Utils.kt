@@ -20,6 +20,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -65,6 +66,8 @@ object Utils {
         App.instance.preferences.edit().clear().apply()
 
         val accessToken = Auth.getOAuth2Token()
+
+        Toast.makeText(context, "expired login!", Toast.LENGTH_SHORT).show()
 
         if (accessToken != null) {
 

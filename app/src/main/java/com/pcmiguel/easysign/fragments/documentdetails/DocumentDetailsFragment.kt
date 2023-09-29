@@ -7,10 +7,13 @@ import android.util.Base64
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -69,6 +72,48 @@ class DocumentDetailsFragment : Fragment() {
 
         loadingDialog = LoadingDialog(requireContext())
         Utils.navigationBar(view, "", requireActivity())
+
+        binding!!.optionsBtn.setOnClickListener {
+
+            val popupMenu = PopupMenu(requireContext(), it)
+
+            popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
+
+            popupMenu.setOnMenuItemClickListener { option ->
+                when (option.itemId) {
+                    R.id.option1 -> {
+
+                        loadingDialog.startLoading()
+
+                        App.instance.backOffice.cancelSignatureRequest(object : Listener<Any> {
+                            override fun onResponse(response: Any?) {
+
+                                loadingDialog.isDismiss()
+
+                                if (isAdded) {
+
+                                    if (response == null) { // assinatura recusada com sucesso
+
+                                        requireActivity().onBackPressed()
+
+                                    }
+
+                                }
+
+                            }
+
+                        }, item.signatureRequestId!!)
+
+
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            popupMenu.show()
+
+        }
 
         recyclerView = binding!!.recipients
         recyclerView.setHasFixedSize(true)

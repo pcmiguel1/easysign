@@ -210,6 +210,29 @@ class BackOffice(
 
     }
 
+    fun cancelSignatureRequest(listener : Listener<Any>?, signatureRequestId : String) {
+
+        apiInterface.cancelSignatureRequest(signatureRequestId).enqueue(object : Callback<Void>() {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+
+                if (response.isSuccessful)  {
+                    listener?.onResponse(null)
+                }
+                else {
+                    val jsonObj = JSONObject(response.errorBody()!!.charStream().readText())
+                    if (jsonObj.has("error")) {
+                        val errorObject = jsonObj.getJSONObject("error")
+                        val errorMsg = errorObject.getString("error_msg")
+                        listener?.onResponse(errorMsg)
+                    }
+                }
+
+            }
+
+        })
+
+    }
+
     fun downloadFilesDataUri(listener: Listener<Any>?, signatureRequestId : String) {
 
         apiInterface.downloadFilesDataUri(signatureRequestId).enqueue(object : Callback<JsonObject>() {

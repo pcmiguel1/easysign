@@ -65,7 +65,7 @@ class EditDocumentFragment : Fragment() {
         webView.addJavascriptInterface(JavaScriptInterface(), "Android")
 
         // Load your web page in the WebView
-        webView.loadUrl("https://www.example.com") // Replace with your form URL
+        //webView.loadUrl("https://www.example.com") // Replace with your form URL
 
         val url = "192.168.1.72:3000/template/edit?edit_url=${editUrl}"
         webView.loadUrl(url)

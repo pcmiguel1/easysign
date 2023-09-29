@@ -71,6 +71,12 @@ interface ApiInterface {
     ) : Call<Void>
 
     @Headers("Content-Type: application/json")
+    @POST("signature_request/cancel/{signature_request_id}")
+    fun cancelSignatureRequest(
+        @Path("signature_request_id") signature_request_id: String
+    ) : Call<Void>
+
+    @Headers("Content-Type: application/json")
     @POST("template/create_embedded_draft")
     fun createEmbeddedTemplateDraft(@Body jsonObject: JsonObject) : Call<CreateEmbeddedDraftRequest>
 
