@@ -15,6 +15,8 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -67,8 +69,6 @@ object Utils {
 
         val accessToken = Auth.getOAuth2Token()
 
-        Toast.makeText(context, "expired login!", Toast.LENGTH_SHORT).show()
-
         if (accessToken != null) {
 
             GlobalScope.launch(Dispatchers.IO) {
@@ -79,7 +79,11 @@ object Utils {
                     // Revoke the access token
                     client.auth().tokenRevoke()
 
-                    context.openActivity(LoadingActivity::class.java)
+                    // Use um Handler para mostrar o Toast na thread principal (UI thread)
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(context, "expired login!", Toast.LENGTH_SHORT).show()
+                        context.openActivity(LoadingActivity::class.java)
+                    }
 
                 } catch (e: DbxException) {
                     e.printStackTrace()
@@ -89,7 +93,11 @@ object Utils {
 
         }
         else {
-            context.openActivity(LoadingActivity::class.java)
+            // Use um Handler para mostrar o Toast na thread principal (UI thread)
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(context, "expired login!", Toast.LENGTH_SHORT).show()
+                context.openActivity(LoadingActivity::class.java)
+            }
         }
 
     }

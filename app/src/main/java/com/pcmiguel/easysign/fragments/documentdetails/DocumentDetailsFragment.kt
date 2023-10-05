@@ -1,6 +1,9 @@
 package com.pcmiguel.easysign.fragments.documentdetails
 
+import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
@@ -16,6 +19,7 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.content.FileProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -30,6 +34,10 @@ import com.pcmiguel.easysign.fragments.documentdetails.adapter.SignatureAdapter
 import com.pcmiguel.easysign.libraries.LoadingDialog
 import com.pcmiguel.easysign.services.ApiAIInterface
 import com.pcmiguel.easysign.services.ApiInterface
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -310,9 +318,11 @@ class DocumentDetailsFragment : Fragment() {
                                         if (response != null && response is ApiAIInterface.ChatAI) {
 
                                             val choices = response.choices
-                                            val text = choices!![0].message!!.content.toString()
 
-                                            resume!!.text = text
+                                            if (choices != null && choices.isNotEmpty()) {
+                                                val text = choices[0].message!!.content.toString()
+                                                resume!!.text = text
+                                            }
 
                                             dialog.show()
 
@@ -348,11 +358,38 @@ class DocumentDetailsFragment : Fragment() {
 
                         if (response != null && response is ApiInterface.EmbeddedResponse) {
 
-                            Log.d("urlembedded", response.embedded!!.signUrl!!)
+                            val bundle = Bundle().apply {
+                                putString("signUrl", response.embedded!!.signUrl!!)
+                            }
+
+                            findNavController().navigate(R.id.action_documentDetailsFragment_to_signDocumentFragment, bundle)
 
                         }
-                        else  {
-                            Log.d("urlembedded", response.toString() + " " + signatureId)
+                        else if (response != null && response is String) {
+
+                            val mDialogView = LayoutInflater.from(requireContext()).inflate(R.layout.popup_error_message, null)
+
+                            val builder = AlertDialog.Builder(requireContext())
+                                .setView(mDialogView)
+                                .setCancelable(false)
+
+                            val dialog = builder.create()
+                            dialog.window?.setBackgroundDrawable(
+                                ColorDrawable(
+                                    Color.TRANSPARENT)
+                            )
+
+                            val errorMessage = mDialogView.findViewById<TextView>(R.id.message)
+                            val okBtn = mDialogView.findViewById<View>(R.id.okBtn)
+
+                            errorMessage.text = response
+
+                            okBtn.setOnClickListener {
+                                dialog.dismiss()
+                            }
+
+                            dialog.show()
+
                         }
 
                     }

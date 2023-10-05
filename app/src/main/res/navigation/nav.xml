@@ -55,12 +55,19 @@
         <action
             android:id="@+id/action_addDocumentsFragment_to_addSignerRolesFragment"
             app:destination="@id/addSignerRolesFragment" />
+        <action
+            android:id="@+id/action_addDocumentsFragment_to_signDocumentFragment"
+            app:destination="@id/signDocumentFragment" />
     </fragment>
     <fragment
         android:id="@+id/addRecipientFragment"
         android:name="com.pcmiguel.easysign.fragments.addrecipient.AddRecipientFragment"
         android:label="fragment_add_recipient"
-        tools:layout="@layout/fragment_add_recipient" />
+        tools:layout="@layout/fragment_add_recipient" >
+        <action
+            android:id="@+id/action_addRecipientFragment_to_signDocumentFragment"
+            app:destination="@id/signDocumentFragment" />
+    </fragment>
     <fragment
         android:id="@+id/createDocumentFragment"
         android:name="com.pcmiguel.easysign.fragments.createdocument.CreateDocumentFragment"
@@ -74,7 +81,11 @@
         android:id="@+id/documentDetailsFragment"
         android:name="com.pcmiguel.easysign.fragments.documentdetails.DocumentDetailsFragment"
         android:label="fragment_document_details"
-        tools:layout="@layout/fragment_document_details" />
+        tools:layout="@layout/fragment_document_details" >
+        <action
+            android:id="@+id/action_documentDetailsFragment_to_signDocumentFragment"
+            app:destination="@id/signDocumentFragment" />
+    </fragment>
     <fragment
         android:id="@+id/templatesFragment"
         android:name="com.pcmiguel.easysign.fragments.templates.TemplatesFragment"
@@ -113,4 +124,9 @@
         android:name="com.pcmiguel.easysign.fragments.addrole.AddSignerRoleFragment"
         android:label="fragment_add_signer_role"
         tools:layout="@layout/fragment_add_signer_role" />
+    <fragment
+        android:id="@+id/signDocumentFragment"
+        android:name="com.pcmiguel.easysign.fragments.signdocument.SignDocumentFragment"
+        android:label="fragment_sign_document"
+        tools:layout="@layout/fragment_sign_document" />
 </navigation>

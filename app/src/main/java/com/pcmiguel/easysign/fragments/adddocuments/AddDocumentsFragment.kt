@@ -491,27 +491,72 @@ class AddDocumentsFragment : Fragment() {
                 App.instance.backOffice.createEmbeddedSignatureRequest(object : Listener<Any> {
                     override fun onResponse(response: Any?) {
 
-                        GlobalScope.launch(Dispatchers.IO) {
-                            // You can update the UI from the main thread if needed
-                            withContext(Dispatchers.Main) {
-                                loadingDialog.isDismiss()
-                            }
-                        }
-
                         if (isAdded) {
 
                             if (response != null && response is ApiInterface.CreateEmbeddedSignatureRequest) {
 
-                                Toast.makeText(requireContext(), "document sent!", Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(requireContext(), "document sent!", Toast.LENGTH_SHORT).show()
 
-                                GlobalScope.launch(Dispatchers.IO) {
+                                //get my signature id
+                                val signatureId = response.signatureRequest!!.signatures?.get(0)?.signatureId
+
+                                //sign the document
+
+                                if (signatureId != null) {
+
+                                    App.instance.backOffice.getEmbeddedSignURL(object : Listener<Any> {
+                                        override fun onResponse(response: Any?) {
+
+                                            GlobalScope.launch(Dispatchers.IO) {
+                                                // You can update the UI from the main thread if needed
+                                                withContext(Dispatchers.Main) {
+                                                    loadingDialog.isDismiss()
+                                                }
+                                            }
+
+                                            if (isAdded) {
+
+                                                if (response != null && response is ApiInterface.EmbeddedResponse) {
+
+
+                                                    GlobalScope.launch(Dispatchers.IO) {
+                                                        withContext(Dispatchers.Main) {
+
+                                                            val bundle = Bundle().apply {
+                                                                putString("signUrl", response.embedded!!.signUrl!!)
+                                                            }
+
+                                                            findNavController().navigate(R.id.action_addDocumentsFragment_to_signDocumentFragment, bundle)
+
+                                                        }
+                                                    }
+
+                                                }
+
+                                            }
+
+                                        }
+
+                                    }, signatureId)
+
+                                }
+
+
+                                /*GlobalScope.launch(Dispatchers.IO) {
                                     withContext(Dispatchers.Main) {
                                         findNavController().navigate(R.id.homeFragment2)
                                     }
-                                }
+                                }*/
 
                             }
                             else if (response != null && response is String) {
+
+                                GlobalScope.launch(Dispatchers.IO) {
+                                    // You can update the UI from the main thread if needed
+                                    withContext(Dispatchers.Main) {
+                                        loadingDialog.isDismiss()
+                                    }
+                                }
 
                                 val mDialogView = LayoutInflater.from(requireContext()).inflate(R.layout.popup_error_message, null)
 
