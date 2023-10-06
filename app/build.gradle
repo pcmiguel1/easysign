@@ -21,8 +21,8 @@ android {
         multiDexEnabled true
 
         buildConfigField "String", "SERVICE_URL", "\"https://api.hellosign.com/v3/\""
-        buildConfigField "String", "API_KEY", "\"471256784f29122d4cb4ae51c4d6d6d22076b09d4fb3fa6bd5c6995b4f2fda71\""
-        buildConfigField "String", "CLIENT_ID", "\"8d330466554aa6b5b571fef2659b49e7\""
+        buildConfigField "String", "API_KEY", "\"93086d3a2fac960d9eb6bf67de1cc27f6cf8d5018d222970ec713ee22d2b196f\""
+        buildConfigField "String", "CLIENT_ID", "\"156d9bd2d04f4a46604a365cea400442\""
 
         buildConfigField "String", "SERVICE_URL_AI", "\"https://api.nova-oss.com/v1/\""
         buildConfigField "String", "API_AI_KEY", "\"nv-rZXtFIfAcv7uXDiiTjpCN0V4x0SSd8DYvYW6JG2av6j57XaH\""

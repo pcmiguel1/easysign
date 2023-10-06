@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
+import android.webkit.WebChromeClient
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.pcmiguel.easysign.App
