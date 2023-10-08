@@ -1,30 +1,23 @@
 package com.pcmiguel.easysign.fragments.onboarding
 
-import android.app.Activity
 import android.app.AlertDialog
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.dropbox.core.DbxException
 import com.dropbox.core.DbxRequestConfig
-import com.dropbox.core.InvalidAccessTokenException
 import com.dropbox.core.android.Auth
 import com.dropbox.core.v2.DbxClientV2
 import com.google.gson.JsonObject
 import com.pawcare.pawcare.services.Listener
 import com.pcmiguel.easysign.*
-import com.pcmiguel.easysign.Utils.openActivity
 import com.pcmiguel.easysign.databinding.FragmentOnBoardingBinding
 import com.pcmiguel.easysign.libraries.LoadingDialog
 import com.pcmiguel.easysign.services.ApiInterface
@@ -32,10 +25,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 
 class OnBoardingFragment : Fragment() {
 

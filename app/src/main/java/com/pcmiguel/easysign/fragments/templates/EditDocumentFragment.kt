@@ -2,7 +2,6 @@ package com.pcmiguel.easysign.fragments.templates
 
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -67,7 +66,7 @@ class EditDocumentFragment : Fragment() {
         // Load your web page in the WebView
         //webView.loadUrl("https://www.example.com") // Replace with your form URL
 
-        val url = "192.168.1.72:3000/template/edit?edit_url=${editUrl}"
+        val url = "https://easysignembedded-qyvz34194-pcmiguel1s-projects.vercel.app/template/edit?edit_url=${editUrl}"
         webView.loadUrl(url)
 
     }

@@ -1,32 +1,19 @@
 package com.pcmiguel.easysign.fragments.home.adapter
 
 import android.content.res.ColorStateList
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.dropbox.core.DbxException
-import com.dropbox.core.DbxRequestConfig
-import com.dropbox.core.android.Auth
-import com.dropbox.core.v2.DbxClientV2
 import com.pcmiguel.easysign.App
 import com.pcmiguel.easysign.R
 import com.pcmiguel.easysign.Utils
 import com.pcmiguel.easysign.services.ApiInterface
-import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.lang.Exception
-import java.lang.Math.*
 
 class RequestsAdapter(private val list: List<ApiInterface.SignatureRequest>) :
     RecyclerView.Adapter<RequestsAdapter.ItemViewHolder>() {

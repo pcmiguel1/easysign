@@ -1,9 +1,6 @@
 package com.pcmiguel.easysign.fragments.home
 
-import android.Manifest
 import android.app.AlertDialog
-import android.content.pm.PackageManager
-import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -14,41 +11,31 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.findFragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.dropbox.core.DbxException
 import com.dropbox.core.DbxRequestConfig
-import com.dropbox.core.android.Auth
 import com.dropbox.core.v2.DbxClientV2
-import com.dropbox.core.v2.files.FileMetadata
 import com.dropbox.core.v2.files.WriteMode
 import com.github.gcacace.signaturepad.views.SignaturePad
 import com.google.android.material.card.MaterialCardView
 import com.pawcare.pawcare.services.Listener
 import com.pcmiguel.easysign.App
-import com.pcmiguel.easysign.LoadingActivity
 import com.pcmiguel.easysign.R
 import com.pcmiguel.easysign.Utils
-import com.pcmiguel.easysign.Utils.openActivity
 import com.pcmiguel.easysign.databinding.FragmentHomeBinding
 import com.pcmiguel.easysign.fragments.home.adapter.RequestsAdapter
 import com.pcmiguel.easysign.libraries.LoadingDialog
 import com.pcmiguel.easysign.services.ApiInterface
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 
 class HomeFragment : Fragment() {
 

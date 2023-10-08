@@ -1,13 +1,11 @@
 package com.pcmiguel.easysign.fragments.signdocument
 
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
-import android.webkit.WebChromeClient
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.pcmiguel.easysign.App
@@ -60,7 +58,7 @@ class SignDocumentFragment : Fragment() {
         // Add a JavaScript interface to the WebView
         webView.addJavascriptInterface(JavaScriptInterface(), "Android")
 
-        val url = "192.168.1.72:3000/sign?sign_url=${signUrl}"
+        val url = "https://easysignembedded-qyvz34194-pcmiguel1s-projects.vercel.app/sign?sign_url=${signUrl}"
         webView.loadUrl(url)
 
     }

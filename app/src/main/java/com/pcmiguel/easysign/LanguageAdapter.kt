@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 
 class LanguageAdapter(context: Context, items: List<Pair<Int, String>>) :
     ArrayAdapter<Pair<Int, String>>(context, R.layout.language_spinner_dropdown_item, items) {

@@ -24,7 +24,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.auth0.jwt.JWT
@@ -35,7 +34,6 @@ import com.dropbox.core.v2.DbxClientV2
 import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
-import com.pcmiguel.easysign.Utils.openActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -44,8 +42,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern

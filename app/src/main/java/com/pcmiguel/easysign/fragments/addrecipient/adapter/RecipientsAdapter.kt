@@ -1,20 +1,12 @@
 package com.pcmiguel.easysign.fragments.addrecipient.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.pcmiguel.easysign.R
-import com.pcmiguel.easysign.fragments.adddocuments.model.Document
 import com.pcmiguel.easysign.fragments.addrecipient.model.Recipient
-import com.pcmiguel.easysign.services.ApiInterface
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
-import java.lang.Exception
-import java.lang.Math.*
 
 class RecipientsAdapter(private val list: List<Recipient>) :
     RecyclerView.Adapter<RecipientsAdapter.ItemViewHolder>() {

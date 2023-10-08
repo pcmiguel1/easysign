@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">192.168.1.72</domain>
+        <domain includeSubdomains="true">easysignembedded-qyvz34194-pcmiguel1s-projects.vercel.app</domain>
     </domain-config>
 </network-security-config>

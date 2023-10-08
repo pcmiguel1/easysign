@@ -2,13 +2,10 @@ package com.pcmiguel.easysign
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
@@ -35,7 +32,6 @@ import android.widget.Spinner
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.navigation.findNavController
 import com.blongho.country_data.World
 import com.dropbox.core.DbxException
 import com.dropbox.core.DbxRequestConfig
@@ -44,15 +40,11 @@ import com.dropbox.core.v2.DbxClientV2
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.itextpdf.kernel.pdf.PdfDocument
-import com.itextpdf.kernel.pdf.PdfReader
 import com.itextpdf.kernel.pdf.PdfWriter
-import com.itextpdf.kernel.pdf.canvas.parser.PdfTextExtractor
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Paragraph
 import com.pawcare.pawcare.services.Listener
 import com.pcmiguel.easysign.Utils.openActivity
-import com.pcmiguel.easysign.fragments.adddocuments.AddDocumentsFragment
-import com.pcmiguel.easysign.fragments.scan.Scanner
 import com.pcmiguel.easysign.libraries.LoadingDialog
 import com.pcmiguel.easysign.libraries.scanner.activity.ScanActivity
 import com.pcmiguel.easysign.libraries.scanner.constants.ScanConstants
@@ -63,11 +55,8 @@ import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import okhttp3.*
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
 
 class MainActivity : AppCompatActivity() {
 

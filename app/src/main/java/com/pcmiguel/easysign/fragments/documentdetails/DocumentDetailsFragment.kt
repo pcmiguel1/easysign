@@ -4,18 +4,14 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.core.content.FileProvider
@@ -34,13 +30,8 @@ import com.pcmiguel.easysign.fragments.documentdetails.adapter.SignatureAdapter
 import com.pcmiguel.easysign.libraries.LoadingDialog
 import com.pcmiguel.easysign.services.ApiAIInterface
 import com.pcmiguel.easysign.services.ApiInterface
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 
 class DocumentDetailsFragment : Fragment() {
 

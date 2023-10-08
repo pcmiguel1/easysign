@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -20,8 +19,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dropbox.core.DbxRequestConfig
 import com.dropbox.core.v2.DbxClientV2
 import com.dropbox.core.v2.files.WriteMode
-import com.dropbox.core.v2.sharing.RequestedVisibility
-import com.dropbox.core.v2.sharing.SharedLinkSettings
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -31,7 +28,6 @@ import com.pcmiguel.easysign.BuildConfig
 import com.pcmiguel.easysign.R
 import com.pcmiguel.easysign.Utils
 import com.pcmiguel.easysign.databinding.FragmentAddRecipientBinding
-import com.pcmiguel.easysign.fragments.adddocuments.adapter.DocumentsAdapter
 import com.pcmiguel.easysign.fragments.addrecipient.adapter.RecipientsAdapter
 import com.pcmiguel.easysign.fragments.addrecipient.model.Recipient
 import com.pcmiguel.easysign.libraries.LoadingDialog
@@ -42,7 +38,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Date
-import kotlin.math.sin
 
 class AddRecipientFragment : Fragment() {
 
