@@ -928,15 +928,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun checkPermission() : Boolean {
-        val result = ContextCompat.checkSelfPermission(applicationContext, android.Manifest.permission.CAMERA)
-        return result == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestPermission() {
-        ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CAMERA), 1)
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

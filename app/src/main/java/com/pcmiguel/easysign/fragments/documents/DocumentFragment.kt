@@ -83,9 +83,6 @@ class DocumentFragment : Fragment() {
 
         })
 
-        //addRequestsToList(filter)
-        //setSwipeRefresh(filter)
-
     }
 
     override fun onResume() {

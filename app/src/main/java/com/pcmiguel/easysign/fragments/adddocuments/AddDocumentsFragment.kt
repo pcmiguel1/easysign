@@ -529,13 +529,6 @@ class AddDocumentsFragment : Fragment() {
 
                                 }
 
-
-                                /*GlobalScope.launch(Dispatchers.IO) {
-                                    withContext(Dispatchers.Main) {
-                                        findNavController().navigate(R.id.homeFragment2)
-                                    }
-                                }*/
-
                             }
                             else if (response != null && response is String) {
 

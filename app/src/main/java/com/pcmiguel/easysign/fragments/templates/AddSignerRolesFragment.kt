@@ -60,12 +60,6 @@ class AddSignerRolesFragment : Fragment() {
         App.instance.mainActivity!!.findViewById<View>(R.id.bottombar).visibility = View.GONE
         App.instance.mainActivity!!.findViewById<View>(R.id.plus_btn).visibility = View.GONE
 
-        /*if (arguments != null && requireArguments().containsKey("templateName")) {
-
-            templateName = arguments?.getString("templateName") ?: ""
-
-        }*/
-
         if (arguments != null && requireArguments().containsKey("documents")) {
 
             val documents = arguments?.getSerializable("documents") as? ArrayList<File>

@@ -199,42 +199,6 @@ class DocumentDetailsFragment : Fragment() {
                                 // Handle the exception as needed
                             }
 
-                            // Delete the temporary file when you're done with it
-                            //tempFile.delete()
-
-                            /*// Create a file to save the PDF in your app's external storage directory
-                            val pdfFile = File(requireContext().getExternalFilesDir(null), "temp_doc.pdf")
-
-                            // Check if the file already exists
-                            if (pdfFile.exists()) {
-                                // Delete the existing file
-                                pdfFile.delete()
-                            }
-
-                            try {
-                                // Save the byte array as a PDF file
-                                val fos = FileOutputStream(pdfFile)
-                                fos.write(pdfData)
-                                fos.close()
-
-                                // Create a content URI using FileProvider
-                                val pdfUri = FileProvider.getUriForFile(
-                                    requireContext(),
-                                    "com.pcmiguel.easysign.provider", // Replace with your FileProvider authority
-                                    pdfFile
-                                )
-
-                                // Open the PDF file with a PDF viewer
-                                val pdfIntent = Intent(Intent.ACTION_VIEW)
-                                pdfIntent.setDataAndType(pdfUri, "application/pdf")
-                                pdfIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                pdfIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Grant read permission to the viewer app
-                                startActivity(pdfIntent)
-
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }*/
-
                         }
                     }
 
